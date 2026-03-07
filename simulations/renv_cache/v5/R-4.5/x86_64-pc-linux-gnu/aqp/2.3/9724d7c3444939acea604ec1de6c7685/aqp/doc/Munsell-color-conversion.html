@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Munsell Color Conversion</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Munsell Color Conversion</h1>
+
+
+
+<p>Soil color is most often described using the <a href="https://en.wikipedia.org/wiki/Munsell_color_system">Munsell color
+system</a>. The <code>aqp</code> package provides several functions for
+converting to and from Munsell color notation, into other
+representations suitable for on-screen display (<a href="https://en.wikipedia.org/wiki/SRGB">sRGB</a>) or numerical
+analysis (<a href="https://en.wikipedia.org/wiki/CIELAB_color_space">CIELAB</a>).</p>
+<div id="color-conversion-functions" class="section level2">
+<h2>Color Conversion Functions</h2>
+<p>Conversion of Munsell notation to “something” that can be displayed
+on-screen (sRGB color representation) is probably the most common color
+transformation applied to soil morphology data. The
+<code>munsell2rgb()</code> function is convenient for this operation
+when Munsell notation has been split into vectors of hue, value, and
+chroma. These could be columns in a <code>data.frame</code> or separate
+vectors. The <code>parseMunsell()</code> function is convenient when a
+full Munsell notation is given as a character vector. Note that
+<code>parseMunsell()</code> is a wrapper to <code>munsell2rgb()</code>.
+For example, converting <code>10YR 4/6</code> with either function can
+return:</p>
+<ul>
+<li>hex-notation of a color: <code>#805921FF</code>, or</li>
+<li>sRGB color coordinates: <code>0.5002233 0.3489249 0.1287694</code>,
+or</li>
+<li>CIELAB color coordinates:
+<code>40.95021 10.31088 37.49513</code>.</li>
+</ul>
+<p>Selection of the closest <code>n</code> Munsell color “chips”, given
+sRGB or CIELAB colorspace coordinates is performed with the
+<code>col2Munsell()</code> function. Input to this function can be
+colorspace coordinates, named colors (e.g. <code>red</code>), or
+hex-notation of a color. For example, the selection of the closest
+Munsell chip for CIELAB coordinates
+<code>(51.4337, 9.917916, 38.6889)</code> results in
+<code>10YR 5/6</code> with a reported sigma (error) of
+<code>1.5e-6</code>. This error is estimated as the <a href="https://en.wikipedia.org/wiki/Color_difference#CIEDE2000">CIE2000
+distance</a> between the source CIELAB coordinates and the CIELAB
+coordinates of the closest Munsell chip.</p>
+<p>A representative Munsell color can be estimated from reflectance
+spectra in the range of 380nm to 730nm with the
+<code>spec2Munsell()</code> function.</p>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt style="display: block; margin: auto;" /></p>
+</div>
+<div id="special-cases" class="section level2">
+<h2>Special Cases</h2>
+<p>Neutral colors are commonly specified two ways in the Munsell system:
+<code>N 3/</code> or <code>N 3/0</code>, either format will work with
+<code>munsell2rgb()</code> and <code>parseMunsell()</code>.</p>
+<p>Non-standard Munsell notation (e.g. <code>3.6YR 4.4 / 5.6</code>),
+possibly collected with a sensor vs. color book, can be approximated
+with <code>getClosestMunsellChip()</code>. A more accurate conversion
+can be performed with the <a href="https://cran.r-project.org/package=munsellinterpol"><code>munsellinterpol</code>
+package.</a>.</p>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Munsell -&gt; hex color</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">parseMunsell</span>(<span class="st">&#39;5PB 4/6&#39;</span>)</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;#476189FF&quot;</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Munsell -&gt; sRGB</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">parseMunsell</span>(<span class="st">&#39;5PB 4/6&#39;</span>,  <span class="at">return_triplets =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>#&gt;           r         g         b
+#&gt; 1 0.2774433 0.3816871 0.5373067</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Munsell -&gt; CIELAB</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">parseMunsell</span>(<span class="st">&#39;5PB 4/6&#39;</span>,  <span class="at">returnLAB =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>#&gt;          L        A         B
+#&gt; 1 40.78393 1.583845 -25.09816</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># hex color -&gt; Munsell</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">col2Munsell</span>(<span class="st">&#39;#476189FF&#39;</span>)</span></code></pre></div>
+<pre><code>#&gt;   hue value chroma     sigma
+#&gt; 1 5PB     4      6 0.2196242</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># neutral color</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">parseMunsell</span>(<span class="st">&#39;N 5/&#39;</span>)</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;#767676FF&quot;</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># non-standard notation</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">getClosestMunsellChip</span>(<span class="st">&#39;3.3YR 4.4/6.1&#39;</span>, <span class="at">convertColors =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;2.5YR 4/6&quot;</code></pre>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

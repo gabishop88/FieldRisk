@@ -1,0 +1,135 @@
+add_column_apsim_met    Add a column to an object of class 'met'
+amp_apsim_met           Calculates attribute amp for an object of class
+                        'met'
+apsim                   Run an APSIM (7.x) 'Classic' simulation
+apsim.options           Environment which stores APSIM options
+apsim_example           Access Example APSIM Simulations
+apsim_options           Setting some options specific to APSIM (7.x)
+                        'Classic'
+apsim_version           Display available APSIM 'Classic' and APSIM-X
+                        versions
+apsimx                  Run an APSIM-X simulation
+apsimx.options          Environment which stores APSIM-X options
+apsimx_example          Access Example APSIM-X Simulations
+apsimx_filetype         Test file format for .apsimx files
+apsimx_options          Setting some options for the package
+apsimx_soil_profile     Create APSIM-X Soil Profiles
+as_apsim_met            Conversion from data frame to met object
+auto_detect_apsim_examples
+                        Auto detect where apsim examples are located
+auto_detect_apsimx_examples
+                        Auto detect where apsimx examples are located
+available_water_content
+                        Calculate available water content
+carbon_stocks           Calculate soil carbon stocks
+check_apsim_met         Check a met file for possible errors
+check_apsimx            Partial checking of an apsimx file for possible
+                        issues.
+compare_apsim           Compare two or more apsim output objects
+compare_apsim_met       Compare two or more metfiles
+compare_apsim_soil_profile
+                        Compare two or more soil profiles
+doy2date                Converts from doy to date
+edit_apsim              Edit an APSIM (Classic) Simulation
+edit_apsim_replace_soil_profile
+                        Edit APSIM 'Classic' file with a replaced soil
+                        profile
+edit_apsim_xml          Edit an APSIM (Classic) Simulation auxiliary
+                        xml file
+edit_apsimx             Edit an APSIM-X (JSON) Simulation
+edit_apsimx_batch       Edit an APSIM-X (JSON) Simulation in Batch mode
+edit_apsimx_replace_soil_profile
+                        Edit APSIM-X file with a replaced soil profile
+edit_apsimx_replacement
+                        Edit a replacement component in an .apsimx
+                        (JSON) file
+extract_data_apsimx     Extract data from an .apsimx (JSON) file
+extract_values_apsimx   Extract values from a parameter path
+get_apsimx_json         fetches the json file for a specific model from
+                        APSIMX github
+get_chirps_apsim_met    Get CHIRPS data for an APSIM met file
+get_daymet2_apsim_met   Get DAYMET data for an APSIM met file
+get_daymet_apsim_met    Get DAYMET data for an APSIM met file
+get_gsod_apsim_met      Get GSOD data for an APSIM met file
+get_iem_apsim_met       Get weather data from Iowa Environmental Ag
+                        Weather Stations
+get_iemre_apsim_met     Get weather data from Iowa Environmental
+                        Mesonet Reanalysis
+get_isric_soil_profile
+                        Generate a synthetic APSIM soil profile from
+                        the ISRIC soil database
+get_power_apsim_met     Get NASA-POWER data for an APSIM met file
+get_slga_soil           Retrieve soil profile data from SLGA (Soils for
+                        Australia)
+get_slga_soil_profile   Generate a synthetic APSIM soil profile from
+                        the SLGA soil database
+get_ssurgo_soil_profile
+                        Retrieve soil profile data and convert it to an
+                        object of class 'soil_profile'
+get_ssurgo_tables       Retrieve soil profile data and return a (list)
+                        with data frames (tables)
+get_worldmodeler_apsim_met
+                        Obtain a weather APSIM met from the World
+                        Modeler database
+get_worldmodeler_soil_profile
+                        Obtain a synthetic APSIM soil profile from the
+                        World Modeler database
+grep_json_list          grep but for json list
+impute_apsim_met        Perform imputation for missing data in a met
+                        file
+initialwater_parms      Helper function to supply additional Initial
+                        Soil Water parameters
+insert_replacement_node
+                        Inserts a replacement node in a simple apsimx
+                        simulation file
+inspect_apsim           Inspect an .apsim (XML) file
+inspect_apsim_xml       Inspect an APSIM Classic auxiliary (XML) file
+inspect_apsimx          Inspect an .apsimx (JSON) file
+inspect_apsimx_json     Inspect an .apsimx or .json (JSON) file
+inspect_apsimx_replacement
+                        Inspect a replacement component in an .apsimx
+                        (JSON) file
+mcmc.apsim.env          Environment to store data for apsim MCMC
+mcmc.apsimx.env         Environment to store data for apsimx MCMC
+napad_apsim_met         Pad a met file with NAs when there are date
+                        discontinuities
+obsWheat                Observed wheat phenology, LAI and biomass
+optim_apsim             Optimize parameters in an APSIM simulation
+optim_apsimx            Optimize parameters in an APSIM Next Generation
+                        simulation
+plot.met                Plot method for object of class 'met'
+print.met               Printer-friendly version of a metfile
+read_apsim              Read APSIM generated .out files
+read_apsim_all          Read all APSIM generated .out files in a
+                        directory
+read_apsim_met          Read in an APSIM met file
+read_apsim_soils        Read in a soils (XML) file into a list of
+                        'soil_profile' objects
+read_apsimx             Read APSIM-X generated .db files
+read_apsimx_all         Read all APSIM-X generated .db files in a
+                        directory
+sens_apsim              Sensitivity Analysis for APSIM Next Generation
+                        simulation
+sens_apsimx             Sensitivity Analysis for APSIM Next Generation
+                        simulation
+soilorganicmatter_parms
+                        Helper function to supply additional Soil
+                        Organic Matter parameters
+soilwat_parms           Helper function to supply SoilWat parameters
+solutes_parms           Helper function to supply additional Solute
+                        parameters
+ssurgo2sp               Take in SSURGO csv files and create a soil
+                        profile
+summary.met             Summary for an APSIM met file
+swim_parms              Helper function to supply SWIM parameters
+tav_apsim_met           Calculates attribute amp for an object of class
+                        'met'
+tt_apsim_met            Calculates Thermal Time taking a 'met' object
+unit_conv               performs common unit conversions
+view_apsim              Viewing an APSIM Classic file interactively
+view_apsim_xml          View an APSIM Classic auxiliary (XML) file
+view_apsimx             Viewing an APSIM-X file interactively
+wop                     Wheat example optimization results
+wop.h                   Wheat example optimization results plus Hessian
+write_apsim_met         Write an APSIM met file
+xargs_apsimx            Provide extra arguments for APSIM-X

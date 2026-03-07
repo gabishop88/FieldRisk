@@ -1,0 +1,204 @@
+ISSR800.wcs             Get 800m gridded soil properties from SoilWeb
+                        ISSR-800 Web Coverage Service (WCS)
+KSSL_VG_model           Develop a Water Retention Curve from KSSL Data
+NASISChoiceList         Work with NASIS Choice Lists
+NASISDomainsAsFactor    Get/Set Options for Encoding NASIS Domains as
+                        Factors
+NASISLocalDatabase      NASIS Local Database
+NASIS_table_column_keys
+                        NASIS 7 Tables, Columns and Foreign Keys
+OSDquery                Search full text of Official Series Description
+                        on SoilWeb
+ROSETTA                 Query USDA-ARS ROSETTA Model API
+SCAN_SNOTEL_metadata    USDA-NRCS Station Metadata for SCAN, CSCAN,
+                        SNOTEL, SNOWLITE Networks
+SDA_query               Query Soil Data Access
+SDA_spatialQuery        Query Soil Data Access by spatial intersection
+                        with supplied geometry
+STRplot                 Graphical Description of US Soil Taxonomy Soil
+                        Temperature Regimes
+SoilWeb_spatial_query   Get SSURGO Data via Spatial Query
+WCS_details             Web Coverage Services Details
+createSSURGO            Create a database from SSURGO Exports
+createStaticNASIS       Create a memory or file-based instance of NASIS
+                        database
+dbConnectNASIS          Create local NASIS database connection
+dbQueryNASIS            Query a NASIS DBIConnection
+downloadSSURGO          Get SSURGO ZIP files from Web Soil Survey
+                        'Download Soils Data'
+estimateColorMixture    Estimate color mixtures using weighted average
+                        of CIELAB color coordinates
+estimateSTR             Estimate Soil Temperature Regime
+fetchHWSD               Fetch Harmonized World Soil Database Data
+fetchKSSL               Get Kellogg Soil Survey Laboratory Data from
+                        SoilWeb snapshot
+fetchLDM                Query data from Kellogg Soil Survey Laboratory
+                        Data Mart via Soil Data Access or local SQLite
+                        snapshot
+fetchNASIS              Get a pedon or component data
+                        'SoilProfileCollection' from NASIS
+fetchNASISLabData       Get NCSS Pedon laboratory data from NASIS
+fetchNASISWebReport     Get component tables from NASIS Web Reports
+fetchOSD                Get Official Series Descriptions and summaries
+                        from SoilWeb API
+fetchPedonPC            Get a SoilProfileCollection from a PedonPC v.5
+                        database
+fetchRaCA               Get Rapid Carbon Assessment (RaCA) data
+fetchSCAN               Get Daily Climate Data from USDA-NRCS SCAN
+                        (Soil Climate Analysis Network) Stations
+fetchSDA_spatial        Get Spatial Data from Soil Data Access by
+                        'mukey', 'nationalmusym' or 'areasymbol'
+fetchSOLUS              Fetch Soil Landscapes of the United States
+                        (SOLUS) Grids
+fetchSRI                Fetch Soil Inventory Resource (SRI) for USFS
+                        Region 6
+fetchSoilGrids          Get SoilGrids 2.0 Property Estimates for Points
+                        or Spatial Extent
+fetchVegdata            Get vegetation plot data from local NASIS
+                        database
+filter_geochem          Filter KSSL Geochemical Table
+format_SQL_in_statement
+                        Format vector of values into a string suitable
+                        for an SQL 'IN' statement.
+getHzErrorsNASIS        Get Logic Errors in NASIS/PedonPC Pedon Horizon
+get_EDIT_ecoclass_by_geoUnit
+                        Get Ecological Dynamics Information Tool (EDIT)
+                        ecological sites by catalog (ESD/ESG) and MLRA
+get_NASIS_metadata      Get NASIS Metadata (Domain, Column and Choice
+                        Lists)
+get_NASIS_table_key_by_name
+                        Get a NASIS table key by type and table name
+get_NASIS_table_metadata
+                        Get NASIS Table Metadata (Table and Column
+                        Descriptions)
+get_NASIS_table_name_by_purpose
+                        Get NASIS 7 Physical Table Names
+get_NOAA_GHCND          Get Global Historical Climatology Network Daily
+                        (GHCND) data from NOAA API
+get_NOAA_stations_nearXY
+                        Get NOAA station data near a given latitude and
+                        longitude
+get_OSD                 Get Official Series Description Data from JSON,
+                        HTML or TXT sources
+get_RMF_from_NASIS_db   Get RMF data from local NASIS
+get_SDA_NASIS_key       Get NASIS Record IDs from Soil Data Access
+get_SDA_coecoclass      Get mapunit ecological sites from Soil Data
+                        Access
+get_SDA_cosurfmorph     Get Geomorphic/Surface Morphometry Data from
+                        Soil Data Access
+get_SDA_hydric          Get map unit hydric soils information from Soil
+                        Data Access
+get_SDA_interpretation
+                        Get map unit interpretations from Soil Data
+                        Access by rule name
+get_SDA_metrics         Get Soil Data Access, Lab Data Mart and Web
+                        Soil Survey Usage Metrics
+get_SDA_muaggatt        Get map unit aggregate attribute information
+                        from Soil Data Access
+get_SDA_pmgroupname     Get map unit parent material group information
+                        from Soil Data Access
+get_SDA_property        Get map unit properties from Soil Data Access
+get_SDV_legend_elements
+                        Get Soil Data Viewer Attribute Information
+get_SRI                 Get Soil Inventory Resource (SRI) for USFS
+                        Region 6
+get_SRI_layers          Get SRI Layers
+get_colors_from_NASIS_db
+                        Get Soil Color Data from a local NASIS Database
+get_colors_from_pedon_db
+                        Get Soil Color Data from a PedonPC Database
+get_comonth_from_NASIS_db
+                        Get component month data from a local NASIS
+                        Database
+get_component_data_from_NASIS_db
+                        Get component data from a local NASIS Database
+get_component_from_GDB
+                        Get a SoilProfileCollection from a SSURGO file
+                        geodatabase
+get_component_from_SDA
+                        Get SSURGO/STATSGO2 Mapunit Data from Soil Data
+                        Access
+get_cosoilmoist_from_NASIS
+                        Get the Component Soil Moisture Tables
+get_ecosite_history_from_NASIS_db
+                        Get Site Ecological Site History
+get_extended_data_from_NASIS_db
+                        Get accessory tables and summaries from a local
+                        NASIS Database
+get_extended_data_from_pedon_db
+                        Get accessory tables and summaries from a local
+                        pedonPC Database
+get_hz_data_from_NASIS_db
+                        Get Horizon Data from a local NASIS Database
+get_hz_data_from_pedon_db
+                        Get Horizon Data from a PedonPC Database
+get_lablayer_data_from_NASIS_db
+                        Get lab pedon layer data from a local NASIS
+                        Database
+get_labpedon_data_from_NASIS_db
+                        Get lab pedon data from a local NASIS Database
+get_mapunit_from_NASIS
+                        Get Legend, Mapunit and Legend Mapunit Area
+                        Overlap Tables
+get_phroots_from_NASIS_db
+                        Get pedon horizon roots data from a local NASIS
+                        Database
+get_projectmilestone_from_NASIS
+                        Get NASIS Project Information
+get_site_data_from_NASIS_db
+                        Get Site Data from a local NASIS Database
+get_site_data_from_pedon_db
+                        Get Site Data from a PedonPC Database
+get_soilseries_from_NASIS
+                        Get records from the Series Classification (SC)
+                        database
+get_text_notes_from_NASIS_db
+                        Get text note data from a local NASIS Database
+get_veg_data_from_NASIS_db
+                        Get vegetation data from a local NASIS Database
+get_veg_from_AK_Site    Get Vegetation Data from an AK Site Database
+get_veg_from_MT_veg_db
+                        Get Site and Plot-level Data from a Montana
+                        RangeDB database
+get_veg_from_NPS_PLOTS_db
+                        Get Vegetation Data from an NPS PLOTS Database
+get_veg_other_from_MT_veg_db
+                        Get cover composition data from a Montana
+                        RangeDB database
+get_veg_species_from_MT_veg_db
+                        Get species-level Data from a Montana RangeDB
+                        database
+loafercreek             Example 'SoilProfilecollection' Objects
+                        Returned by 'fetchNASIS'.
+local_NASIS_defined     Check for presence of 'nasis_local' ODBC data
+                        source
+makeChunks              Generate chunk labels for splitting data
+make_EDIT_service_URL   Make Ecological Dynamics Interpretive Tool
+                        (EDIT) web services URL
+metadata                NASIS 7 Metadata
+mukey.wcs               Get Map Unit Key ('mukey') grid from SoilWeb
+                        Web Coverage Service (WCS)
+parseWebReport          Parse contents of a web report, based on
+                        supplied arguments.
+processSDA_WKT          Post-process Well-Known Text from Soil Data
+                        Access
+seriesExtent            Retrieve Soil Series Extent Maps from SoilWeb
+siblings                Get "siblings" and "cousins" for a given soil
+                        series
+simplifyArtifactData    Simplify Coarse Fraction Data
+simplifyColorData       Simplify Color Data by ID
+soilColor.wcs           Get 30m or 270m gridded soil soil color data
+                        from SoilWeb Web Coverage Service (WCS)
+soilDB-package          Soil Database Interface
+soilDB.env              Get the soilDB environment used for storing
+                        error messages and quality control output
+soilDB_user_dir         Get soilDB User Directory Path
+summarizeSoilTemperature
+                        Get data from Henry Mount Soil Temperature and
+                        Water Database
+taxaExtent              Get SoilWeb 800m Major Component Soil Taxonomy
+                        Grids
+uncode                  Convert coded values returned from NASIS and
+                        SDA queries into human-readable values
+us_ss_timeline          Timeline of US Published Soil Surveys
+waterDayYear            Compute Water Day and Year
