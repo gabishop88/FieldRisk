@@ -1,0 +1,11 @@
+Period,APSIM StageName,Notes
+1,Germinating,pre-planting period
+2,Emerging,NA
+3,Juvenile,NA
+5,LeafAppearance,NA
+6,FlagLeafToFlowering,NA
+7,FloweringToGrainFilling,NA
+8,GrainFilling,NA
+10,MaturityToHarvestRipe,NA
+11,ReadyForHarvesting,post-harvest period
+6,LeafAppearance,NA

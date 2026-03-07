@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Fernando Miguez" />
+
+<meta name="date" content="2025-03-09" />
+
+<title>apsimx: An R package for APSIM Next Generation (and Classic)</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">apsimx: An R package for APSIM Next
+Generation (and Classic)</h1>
+<h4 class="author">Fernando Miguez</h4>
+<h4 class="date">2025-03-09</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a>
+<ul>
+<li><a href="#background-information" id="toc-background-information">Background information</a></li>
+<li><a href="#installing-apsim-next-generation" id="toc-installing-apsim-next-generation">Installing APSIM (Next
+Generation)</a></li>
+<li><a href="#r-functions-for-apsim-next-generation" id="toc-r-functions-for-apsim-next-generation">R functions for APSIM
+(Next Generation)</a></li>
+<li><a href="#r-functions-for-apsim-classic-7.x---only-for-windows" id="toc-r-functions-for-apsim-classic-7.x---only-for-windows">R
+functions for APSIM ‘Classic’ (7.x) - Only for Windows</a></li>
+</ul></li>
+<li><a href="#using-apsimx" id="toc-using-apsimx">Using ‘apsimx’</a>
+<ul>
+<li><a href="#running-a-built-in-example-with-apsimx_example" id="toc-running-a-built-in-example-with-apsimx_example">Running a
+built-in example with ‘apsimx_example’</a></li>
+<li><a href="#inspecting-a-file-with-inspect_apsimx-why" id="toc-inspecting-a-file-with-inspect_apsimx-why">Inspecting a file
+with ‘inspect_apsimx’: Why?</a></li>
+<li><a href="#inspecting-and-editing-the-maize-example" id="toc-inspecting-and-editing-the-maize-example">Inspecting and Editing
+the ‘Maize’ example</a></li>
+</ul></li>
+<li><a href="#proposed-workflow" id="toc-proposed-workflow">Proposed
+workflow</a>
+<ul>
+<li><a href="#wheat-example-apsim-x" id="toc-wheat-example-apsim-x">Wheat Example (APSIM-X)</a></li>
+<li><a href="#millet-example-apsim-classic" id="toc-millet-example-apsim-classic">Millet example (APSIM
+‘Classic’)</a></li>
+</ul></li>
+<li><a href="#advanced-examples" id="toc-advanced-examples">Advanced
+Examples</a>
+<ul>
+<li><a href="#inspecting-a-replacement-component" id="toc-inspecting-a-replacement-component">Inspecting a ‘Replacement’
+component</a></li>
+<li><a href="#editing-a-replacement" id="toc-editing-a-replacement">Editing a ‘Replacement’</a></li>
+<li><a href="#inspecting-and-editing-a-factorial" id="toc-inspecting-and-editing-a-factorial">Inspecting and editing a
+Factorial</a></li>
+</ul></li>
+<li><a href="#apsim-inputs-weather-and-soil" id="toc-apsim-inputs-weather-and-soil">APSIM Inputs: Weather and
+Soil</a>
+<ul>
+<li><a href="#obtaining-weather-data" id="toc-obtaining-weather-data">Obtaining weather data</a></li>
+<li><a href="#obtaining-soil-data" id="toc-obtaining-soil-data">Obtaining soil data</a></li>
+</ul></li>
+<li><a href="#file-type-or-file-format-details" id="toc-file-type-or-file-format-details">File Type (or File Format)
+Details</a></li>
+<li><a href="#additional-miscellaneous-functions" id="toc-additional-miscellaneous-functions">Additional miscellaneous
+functions</a></li>
+<li><a href="#appendix" id="toc-appendix">Appendix</a></li>
+</ul>
+</div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="do">## Will only write file to a temporary directory for these Examples</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>tmp.dir <span class="ot">&lt;-</span> <span class="fu">tempdir</span>()</span></code></pre></div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Are you a user of APSIM-X (“Next Generation”)? Are you a frequent
+user of R? Are you hoping for APSIM-X and R to interact with each other?
+Then the answer is the <strong>apsimx</strong> package, which allows you
+to inspect, edit, run and read files created by APSIM-X – .apsim(x)
+files. New .apsimx files are based on the JSON (JavaScript Object
+Notation <a href="https://www.json.org/" class="uri">https://www.json.org/</a>) format and it is used to
+communicate information to the APSIM-X engine. By using the ‘jsonlite’ R
+package <strong>apsimx</strong> can read and write (‘inspect’ and
+‘edit’) files in this format. APSIM ‘Classic’ used an XML format and
+this type is now fully supported (‘inspect’, ‘edit’, ‘run’ and ‘read’).
+For ‘inspect’ and ‘edit’ in the APSIM ‘Classic’ version I use the ‘xml2’
+package. To run simulations the <em>apsimx</em> function (<em>apsim</em>
+for ‘Classic’) is available and results from the simulation can be
+imported as an R object with a dedicated function (<em>read_apsimx</em>
+‘NG’ and <em>read_apsim</em> for ‘Classic’). If you need to write
+scripts (regardless of whether you use the <strong>apsimx</strong>
+package or not) the vignette ‘writing scripts’ might be useful. The
+package is currently being developed and available at: <a href="https://github.com/femiguez/apsimx" class="uri">https://github.com/femiguez/apsimx</a>. If you have any
+questions write to: femiguez <em>at</em> iastate.edu.</p>
+<p>In part this package is inspired by previous work by Bryan Stanfill
+on the ‘apsimr’ package (previously available from CRAN and github: <a href="https://github.com/stanfill/apsimr" class="uri">https://github.com/stanfill/apsimr</a>). That package made
+it possible to not only run APSIM from R, but also to perform
+sensitivity analysis and model emulation using ‘GAMS’. However, that
+package has not been maintained in the last five years and it does not
+work for the new APSIM-X framework. Another useful R package used to be
+‘APSIM’, but it has been removed from CRAN (as of 2020-10-19) but as
+with ‘apsimr’ it has not been updated and it has somewhat of a different
+functionality. The ‘APSIM’ package was especially useful for creating
+weather (‘.met’) files. The functionality in <em>apsimx</em> goes beyond
+that in the removed ‘APSIM’ package. There is also a package
+‘APSIMBatch’, but it has limited functionality.</p>
+<div id="background-information" class="section level2">
+<h2>Background information</h2>
+<p>To run the code in this vignette, you need to have APSIM ‘Next
+Generation’ installed. However, if you have not used APSIM it is
+recommended that you become familiar with it before hand.</p>
+<p>See the following for details</p>
+<p><a href="https://www.apsim.info">APSIM</a></p>
+<p><a href="https://apsimnextgeneration.netlify.app/">APSIM-X</a></p>
+<p>Holzworth et al. (2018). APSIM Next Generation: Overcoming challenges
+in modernising a farming systems model, Environmental Modelling &amp;
+Software.</p>
+<p>This package has been tested on (latest version):</p>
+<p><strong>Mac</strong>: ApsimX version (2025-03) 7382 (R 4.3.0)</p>
+<p><strong>Debian</strong>: ApsimX version (2024-02) 7382 (R 4.1.2)</p>
+<p><strong>Windows</strong>: ApsimX version (2025-03) 7676 and APSIM
+Classic 7.10-r4221 (R 4.3.3)</p>
+</div>
+<div id="installing-apsim-next-generation" class="section level2">
+<h2>Installing APSIM (Next Generation)</h2>
+<p>For most functions in this package you need to have a version of
+APSIM-X (or ‘Next Generation’) installed (or APSIM ‘Classic’). For Mac
+and Linux, for versions older than Sep 2021, first you need to install
+mono (<a href="https://www.mono-project.com/download/stable/" class="uri">https://www.mono-project.com/download/stable/</a>) and then
+download and install APSIM (<a href="https://www.apsim.info/download-apsim/downloads/" class="uri">https://www.apsim.info/download-apsim/downloads/</a>).
+<strong>NOTE</strong>: If you are using a version of APSIM Next Gen
+released after Sep 2021, you do <strong>not</strong> need to install
+mono. You will need the .NET Runtime 8.0 for Linux or Mac (go to dotnet
+microsoft), -&gt; download -&gt; dotnet -&gt; 8.0. The
+<strong>apsimx</strong> package will try to detect both mono and APSIM
+(Classic and Next Generation).</p>
+<p><strong>Mac</strong>: For Mac it is also assumed that APSIM has been
+moved to ‘Applications’.</p>
+<p><strong>Windows</strong>: In Windows the default install location is
+in ‘Program Files’ for APSIM (Next Generation) and Program Files (x86)
+for APSIM ‘Classic’.</p>
+<p><strong>Linux (Debian)</strong>: It assumed that APSIM is in
+‘/usr/local/lib/apsim/’.</p>
+<p>If you have your own flavor of APSIM, then you need to set the path
+manually using the function ‘apsim_options’ for Classic and
+‘apsimx_options’ for Next Generation.</p>
+</div>
+<div id="r-functions-for-apsim-next-generation" class="section level2">
+<h2>R functions for APSIM (Next Generation)</h2>
+<p>The main functions in the package are (for now):</p>
+<ul>
+<li><strong>inspect_apsimx</strong> simple inspecting of an .apsimx
+file. (It does not replace the GUI.)</li>
+<li><strong>edit_apsimx</strong> edit/modify an .apsimx file.</li>
+<li><strong>apsimx</strong> run an .apsimx simulation.</li>
+<li><strong>read_apsimx</strong> read files created by an .apsimx
+simulation run (.db files)</li>
+<li><strong>read_apsimx_all</strong> read all files created by one or
+more .apsimx simulation runs in a directory (.db files)</li>
+<li><strong>inspect_apsimx_replacement</strong> inspect a replacement
+component of an .apsimx file.</li>
+<li><strong>apsimx_options</strong> set global options: path for
+executable, examples and warnings.</li>
+</ul>
+<p>There are many other useful function described below.</p>
+</div>
+<div id="r-functions-for-apsim-classic-7.x---only-for-windows" class="section level2">
+<h2>R functions for APSIM ‘Classic’ (7.x) - Only for Windows</h2>
+<p>The main functions relevant for ‘Classic’ are:</p>
+<ul>
+<li><strong>inspect_apsim</strong> allows for inspection of .apsim
+file.</li>
+<li><strong>edit_apsim</strong> edit an .apsim file.</li>
+<li><strong>apsim</strong> runs an .apsim file.</li>
+<li><strong>read_apsim</strong> reads files (.out and .sim) generated by
+apsim into a data frame.</li>
+<li><strong>apsim_example</strong> runs (only a few) of the built-in
+examples.</li>
+<li><strong>apsim_options</strong> set global options: path for
+executable, examples and warnings.</li>
+<li><strong>edit_apsim_xml</strong> edit an XML file such as Maize.xml
+or Soil.xml</li>
+</ul>
+<p>See also ‘optim’ vignette for optimization options and ‘sensitivity’
+vignette for sensitivity analysis.</p>
+</div>
+</div>
+<div id="using-apsimx" class="section level1">
+<h1>Using ‘apsimx’</h1>
+<div id="running-a-built-in-example-with-apsimx_example" class="section level2">
+<h2>Running a built-in example with ‘apsimx_example’</h2>
+<p>To get started you can run one of the examples distributed with
+APSIM-X. This function does the following: it detects where the APSIM
+examples are located, it runs the example indicated and it returns the
+‘report’ as a data.frame. After that you can do the usual manipulations,
+including visualization.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>maize <span class="ot">&lt;-</span> <span class="fu">apsimx_example</span>(<span class="st">&quot;Maize&quot;</span>)</span></code></pre></div>
+<p>After we run this example we can treat it as a standard data frame in
+R.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">summary</span>(maize)</span></code></pre></div>
+<pre><code>##   CheckpointID  SimulationID     Zone           Clock.Today       
+##  Min.   :1     Min.   :1     Length:10          Length:10         
+##  1st Qu.:1     1st Qu.:1     Class :character   Class :character  
+##  Median :1     Median :1     Mode  :character   Mode  :character  
+##  Mean   :1     Mean   :1                                          
+##  3rd Qu.:1     3rd Qu.:1                                          
+##  Max.   :1     Max.   :1                                          
+##  Maize.Phenology.CurrentStageName Maize.AboveGround.Wt Maize.AboveGround.N
+##  Length:10                        Min.   : 198.5       Min.   : 2.103     
+##  Class :character                 1st Qu.: 887.8       1st Qu.: 9.149     
+##  Mode  :character                 Median :1347.2       Median :13.543     
+##                                   Mean   :1261.5       Mean   :12.749     
+##                                   3rd Qu.:1620.2       3rd Qu.:17.056     
+##                                   Max.   :1995.9       Max.   :18.327     
+##  Maize.Grain.Wt   Maize.Grain.Size Maize.Grain.NumberFunction Maize.Grain.N    
+##  Min.   : 70.35   Min.   :0.2205   Min.   : 232.3             Min.   : 0.9447  
+##  1st Qu.:381.36   1st Qu.:0.2820   1st Qu.:1440.0             1st Qu.: 5.2682  
+##  Median :636.27   Median :0.2926   Median :2220.7             Median : 8.4116  
+##  Mean   :585.84   Mean   :0.2850   Mean   :2058.2             Mean   : 7.7509  
+##  3rd Qu.:836.26   3rd Qu.:0.2988   3rd Qu.:2880.1             3rd Qu.:11.0796  
+##  Max.   :885.18   Max.   :0.3028   Max.   :3058.4             Max.   :11.3600  
+##  Maize.Total.Wt        Date           
+##  Min.   : 221.6   Min.   :1991-05-28  
+##  1st Qu.: 984.6   1st Qu.:1993-06-15  
+##  Median :1493.8   Median :1995-09-24  
+##  Mean   :1379.6   Mean   :1995-10-01  
+##  3rd Qu.:1757.4   3rd Qu.:1997-12-12  
+##  Max.   :2152.1   Max.   :2000-04-04</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## Simple data plotting</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> maize , <span class="fu">aes</span>(<span class="at">x =</span> Date, <span class="at">y =</span> Maize.AboveGround.Wt)) <span class="sc">+</span> </span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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nHXWWYVcW+eIgAiUOYHQTuhMNj/++KN59dVXDYbojTfeMO+88441QDvuuGPmofotAiIgAlUSqNIAffTRR+a5556zza9JkyYZPGjbtWtnjj76aHPnnXeaRo0aVXkRHSACIiAC2QiEGqB99tnHrjO98847m4MOOsj07NnT7L777nYuTrbEkrxtxowZ5vvvv7dOlRtttFGSsyLdRSAxBEIN0PLly+2SrqysiLczjolu7lNichhB0SuvvNI8+uijdrLg4sWLzV133WUOPfTQCGfqEBEQgeoQCO2EfvPNN22H86abbmqGDBli+GzWrJnp3r27eemll6yHdHUuXgznModt2LBhhv4tjA/SuXNnM3369GJQTzqIQEkTCDVAzMbed999zcCBA82HH35oZs+ebS644AIza9Ysc+yxx5o6derYmgKTVJMqjz/+eCXVyTcGViICIlCZAM/MgAEDzIMPPlh5Z55bQptgmWk1aNDAnH766aZDhw52JIyaAx7SxCI58sgjMw9PxO9sU0uY3b7mmmsmQn8pKQI1SYC+4M8//9z8/PPPdl7o4MGDzXvvvWcjQhSiR2gNyCX42WefGcJu0DTZbrvtzAYbbGDOO+886yH98MMPm1tuucUdmrhPmpPBmCUubtAJJ5yQuLxIYRHwSYB+0n/+85/W+HAdomEsXbrU3HHHHQVfNrQGdM455xiqW/Pnz7fNLZpj3bp1M/vvv7/tkC74qkV0Ij5MzPLHrQDj07RpU3P77berBlRE90iqFAeBjz/+uJIiBEKje6ZQCTVAzPkiHAcGh6F4mialKBihTz/9tBSzVjR54kX29NNP21HV3r1728+iUU6KRCLAIBRdEzS/nNB6ICRPobJaKopavGHUCtXE43mMbgHqhx9+iP0qtWvXtmkvXLgw9rSJxUutLHjD47rI+uuvb5NyI39xpUs6LmzqihUrbLJdu3Y1Y8eOtVV2XmK82PCmL6Tg0vznrUuEhrilVq1alrWPSI74ljHS6qMMrrfeerYpFPejTNnbeOON7egwoWThsv3221tGNL8YrOEeMziVK/IhjssMVuWSaldpTjzxRHPppZfmSl/by5zA1KlTbUgXCiziIinQhyhJFgFe4jjs0io67LDDbJ/wF198kdP4RMldaBMsSgJUy+Q5HIVUeR7z7bff2uYWk5iD8s033wR/6ntCCFAruvDCC2PT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FwERSB6ByAaI2fBESDzssMPsLHiX1aFDh5o33njDjBw50m3SpwiIgAhEIhCpD4iUcDo86qij7LpGkVLWQSIgAiJQBYHIBoh07rvvPtOzZ08bjsOHP0MVumq3CIhAiRHIywC1bdvWvPbaa2bMmDHWE3r58uW2Q7rEmCg7IiACNUQgLwOEhyhLitAZ/c0339jlhhctWlRDquoyIiACpUYgLwPkMt+gQQM7GsbIWL9+/dxmfYqACIhAXgQij4INHDhwpXWta9WqZVdIveyyy0ydOnXyuqgOFgEREAEIRDZAXbp0qUSMKRqDBg2qtF0bREAERCAKgVADxNpQzGTdYYcdzKuvvppzBjKTUps2bRrlejpGBERABNIEQg0QS/bi6cycrw4dOtjYP+kzA19YvFCOiAEg+ioCIhCJQKgBmjp1anqYff78+TkT1Gz4nGi0QwREIIRAqAFyQas4n7lfhGRduHBhuimGM+LSpUvNggUL7Gz5kOtolwiIgAhUIhBqgIJHP/TQQ+ass87KGhOoc+fOMkBBWPouAiIQiUBkP6Du3bubY445xq4JzxA8zogsSli/fn1z3XXXRbqYDhIBERCBIIFINSCaWd9++63p27evYR0wwmISBvK8884z//rXv8y1115rBg8eHExX30VABESgSgKRakBrrbWWoT+IGMVIkyZNzOTJk+331q1bG4brJSIgAiKQL4FIBgjj07x5c9OrVy/DBFQCkT322GM2IuK4cePMlltume91dbwIiIAIRPeEvvXWW+0MeGbE0+m8yy67WCdFRsKYHS8RAREQgXwJROoDItGWLVuar7/+2q4RhHc0PkLjx483BxxwgF0vLN8L63gREAERCDVAOB9mW/CMTmkWn2OlVISQHJqQqsIkAiKQL4FQA7Tvvvsa1v2qSqozFYNaFbGFnNStW9dss8029icOjlOmTDFbbLGFady4sTvEfs6YMcN89dVXpkWLFqZevXor7dMPERCBZBAINUAMtyOMdJ1wwglm1113zZqr6hiAu+++23z33XfpUB/MPcMA0cQj/CvrkdH/dOqpp9plgVCAQPgYRo675ZZbzE033WQ233zzrLppowiIQPESCDVAr7zyinU4HDFihBkwYIBZe+21rSFiLbDtt98+llx99tlnNu1MA3L99ddbvyNG34477jjTqVMnc+ihh9raEksDsTY9c9DQ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gGpA1byRzZs3N8zVSprsuuuu6aDjSdKdibnbbbddklS2uu6///42mFySFCdELU3e+vXre1NbfUDe0CphERCBqgioCVYVIe0XARHwRkAGKATt9OnTzaxZs1Y6gtjML774opk3b95K2/kxc+ZMGyaVsKlBYTQh1znB4+L6/sILL1Ra2SGX3nSOvv7662batGk5OxtfeeUVUxPBz7LpnYtpmN7fffedef75581nn30WF9LQdOLS2+XVx8oZwQyElccZM2aY8ePHmwULFgRPsb9hyv5MyXVO5nHZfq/eOyXZdpT7ti+//NJccMEFNgD8NttsY3GMGTPG9OvXz8bjuffee22YVILEI5deeql5+eWX7YN/6623mr333tuss846ZvTo0Wbw4MGmdu3aZvjw4ebzzz83u+22mz3Hx78nnnjCDBgwwAawdwsD5tJ7zpw55swzz7RLxUyZMsXqv++++67UN0Tc6auuusoOwxIGxJdk0zsX0zC9p06dai6//HJTr149M2rUKPvA7L777r7UNnHpfd111xkMPYb1H//4hy0/xH2KW8LK49ChQ81TTz1ll/i55ZZbzJ577mnLLUx5Frj/d9xxh2EpKtcPl+ucyHrjByRZmUDqJlR06NCh4oQTTqgYN25ceie/P/74Y/s79Yao2G+//SpS4VIrUm/aimOOOSZ9XKpQVqSChVWk1peqOProoytSbza778cff6xIRTGsWLRoUfrYuL6kYkRXpHxjKlL+PRWpkB1WL5d2Lr3vvPPOilRBc4dVnHPOORUpI5r+/f3331eccsopFYcddlhFqiaY3h7nl1x652LKtcP0Jv9vvPGGVZF7kzKeFakaRZwq27Ti1DtVI6k46KCD0vcs9ZBXpPyzYtc5rDymXrgVRx55ZEXKANrrpl6WFddee639fvLJJ1e8//779vu3335rywNMw86JqryaYFlMNQu93XPPPYaaj1ucjWrr/PnzzbbbbmvPqFu3rq0JzZ0713z44YemWbNm6ZQ4huo0cZzvv/9+s+WWW9p9xHb+4YcfvKwYypuTmhVvrqDkq/cXX3xhT08VINO/f39z7rnn2jdeMM04v+fSOxdTrp1tH3qnDLytYTZu3Ng2I7755hvTp08fw2hO3BKn3tSUWbb53XffNUuXLrXN4Q033DBulUPLI+WVMuxWMm3RooVJvWxtjZ4apyvfG220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" /><!-- --></p>
+</div>
+<div id="inspecting-a-file-with-inspect_apsimx-why" class="section level2">
+<h2>Inspecting a file with ‘inspect_apsimx’: Why?</h2>
+<p>Being able to inspect a file from within R is a functionality which
+was not considered in previous R packages. My first motivation for doing
+this was to be able to verify from within R that if I edited an APSIM(X)
+file, the editing worked as expected. The second use of ‘inspect’ is to
+be able to understand the structure of ‘apsim’ files better. A third
+useful aspect of ‘inspect’ is that it can be used to supply the path for
+a parameter that will be later edited. Another benefit of the inspect
+functions is that if you are running APSIM in a Linux cluster, you do
+not have access to the GUI, so these functions allow you to inspect your
+files in that environment. In addition, having this functionality within
+R allows to make these tasks repeatable. For complex inspections and
+manipulations of an .apsim(x) file the GUI is recommended. This package
+was originally designed to work with relatively simple .apsim(x) files,
+but functionality has evolved and it can handle more complex
+simulations.</p>
+</div>
+<div id="inspecting-and-editing-the-maize-example" class="section level2">
+<h2>Inspecting and Editing the ‘Maize’ example</h2>
+<p>Here I’m using the ‘Maize’ example distributed with APSIM-X but
+stored in the package and the specific task is: we want to make sure
+that the intended component was edited as expected. Let’s look at the
+weather file used.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>extd.dir <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="at">package =</span> <span class="st">&quot;apsimx&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Maize.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">node =</span> <span class="st">&quot;Weather&quot;</span>)</span></code></pre></div>
+<pre><code>## Met file: %root%\Examples\WeatherFiles\Dalby.met</code></pre>
+<p>Editing a file has the side effect of creating a new file with
+‘-edited’ added to the name to avoid conflict or unintended
+consequences, but it is also possible to overwrite it. This follows the
+same style as in the ‘apsimr’ package. One difference is that it is
+possible to supply a different ‘edit.tag’. This code does not run an
+APSIM simulation, it only edits the file.</p>
+<p>Let’s say we want to modify the values of ‘Organic Carbon’ in the
+soil in the ‘Maize.apsimx’ example. First we should inspect the current
+values.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Maize.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir, </span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>               <span class="at">node =</span> <span class="st">&quot;Soil&quot;</span>, <span class="at">soil.child =</span> <span class="st">&quot;Organic&quot;</span>)</span></code></pre></div>
+<pre><code>## Soil Type:  Clay 
+## Latitude:  -27.58184 
+## Longitude:  151.3202 
+## Soil children: Physical SoilWater Organic Chemical InitialWater InitialN CERESSoilTemperature Nutrient 
+## 
+## 
+## |parm       |value |
+## |:----------|:-----|
+## |FOMCNRatio |40    |
+## 
+## 
+## |Depth   |Thickness |Carbon |SoilCNRatio |FBiom |FInert |FOM              |
+## |:-------|:---------|:------|:-----------|:-----|:------|:----------------|
+## |0-15    |150       |1.2    |12          |0.04  |0.4    |347.129032312756 |
+## |15-30   |150       |0.96   |12          |0.02  |0.6    |270.344362191994 |
+## |30-60   |300       |0.6    |12          |0.02  |0.8    |163.972144349901 |
+## |60-90   |300       |0.3    |12          |0.02  |1      |99.4541328870406 |
+## |90-120  |300       |0.18   |12          |0.01  |1      |60.3219808311247 |
+## |120-150 |300       |0.12   |12          |0.01  |1      |36.5871308286749 |
+## |150-180 |300       |0.12   |12          |0.01  |1      |22.1912165985086 |</code></pre>
+<p>The function ‘inspect_apsimx’, in this example, displays various
+information about the organic matter in the soil. (See the help page -
+?inspect_apsimx - for more options). In the next step, we ‘edit’ the
+values.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>ocs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="fl">1.4</span>, <span class="fl">1.3</span>, <span class="fl">1.2</span>, <span class="fl">1.1</span>, <span class="fl">1.0</span>, <span class="fl">0.9</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">edit_apsimx</span>(<span class="st">&quot;Maize.apsimx&quot;</span>, </span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>            <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>            <span class="at">wrt.dir =</span> <span class="st">&quot;.&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>            <span class="at">node =</span> <span class="st">&quot;Soil&quot;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>            <span class="at">soil.child =</span> <span class="st">&quot;Organic&quot;</span>, </span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>            <span class="at">parm =</span> <span class="st">&quot;Carbon&quot;</span>, <span class="at">value =</span> ocs)</span></code></pre></div>
+<pre><code>## Edited (node):  Soil 
+## Edited (child):  Organic 
+## Edited parameters:  Carbon 
+## New values:  1.5 1.4 1.3 1.2 1.1 1 0.9 
+## Created:  ./Maize-edited.apsimx</code></pre>
+<p>Let’s make sure that we have changed the values successfully.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Maize-edited.apsimx&quot;</span>, <span class="at">src.dir =</span> <span class="st">&quot;.&quot;</span>, </span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>               <span class="at">node =</span> <span class="st">&quot;Soil&quot;</span>, <span class="at">soil.child =</span> <span class="st">&quot;Organic&quot;</span>)</span></code></pre></div>
+<pre><code>## Soil Type:  Clay 
+## Latitude:  -27.58184 
+## Longitude:  151.3202 
+## Soil children: Physical SoilWater Organic Chemical InitialWater InitialN CERESSoilTemperature Nutrient 
+## 
+## 
+## |parm       |value |
+## |:----------|:-----|
+## |FOMCNRatio |40    |
+## 
+## 
+## |Depth   |Thickness |Carbon |SoilCNRatio |FBiom |FInert |FOM              |
+## |:-------|:---------|:------|:-----------|:-----|:------|:----------------|
+## |0-15    |150       |1.5    |12          |0.04  |0.4    |347.129032312756 |
+## |15-30   |150       |1.4    |12          |0.02  |0.6    |270.344362191994 |
+## |30-60   |300       |1.3    |12          |0.02  |0.8    |163.972144349901 |
+## |60-90   |300       |1.2    |12          |0.02  |1      |99.4541328870406 |
+## |90-120  |300       |1.1    |12          |0.01  |1      |60.3219808311247 |
+## |120-150 |300       |1      |12          |0.01  |1      |36.5871308286749 |
+## |150-180 |300       |0.9    |12          |0.01  |1      |22.1912165985086 |</code></pre>
+<p>There is another function that might be useful
+<strong>inspect_apsimx_json</strong> which can be more flexible and a
+variation of grep <strong>grep_json_list</strong>.</p>
+</div>
+</div>
+<div id="proposed-workflow" class="section level1">
+<h1>Proposed workflow</h1>
+<p>It is recommended that you start by creating an .apsim(x) file using
+the GUI. In following steps the goal could be, for example, to either
+perform sensitivity or uncertainty analysis using R. The functions
+included in this package are aimed at simplifying the process of running
+a simulation, changing the value of a variable/parameter and running the
+model again iteratively. Writing complex scripts requires a high level
+knowledge of both APSIM and R, but it is made possible with these tools.
+This is the proposed workflow:</p>
+<ol style="list-style-type: decimal">
+<li>Create a simulation using the APSIM GUI</li>
+<li>Identify variables/parameters that you want to modify (they need to
+be exposed in the .apsimx (JSON) or .apsim (XML) file)</li>
+<li>Edit the file using ‘edit_apsim(x)’</li>
+<li>Run the simulation using ‘apsim(x)’</li>
+<li>Repeat steps 3 and 4 as needed</li>
+<li>Read in and/or manipulate the results, possibly using
+‘read_apsim(x)’</li>
+<li>Perform visual and statistical analysis</li>
+</ol>
+<p>Another proposed more advanced workflow would involve calibrating or
+optimizing variables given observed data. This is considered in more
+detail below.</p>
+<div id="wheat-example-apsim-x" class="section level2">
+<h2>Wheat Example (APSIM-X)</h2>
+<p>The ‘Wheat’ example is distributed with the ‘apsimx’ package.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">apsimx</span>(<span class="st">&quot;Wheat.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">value =</span> <span class="st">&quot;report&quot;</span>)</span></code></pre></div>
+<p>If you have APSIM-X installed you can also run it in this way.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>ex.dir <span class="ot">&lt;-</span> <span class="fu">auto_detect_apsimx_examples</span>()</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="do">## Copy &#39;Wheat&#39; file to a temporary directory</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="do">## (or change as needed)</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>tmp.dir2 <span class="ot">&lt;-</span> <span class="fu">tempdir</span>()</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="fu">paste0</span>(ex.dir, <span class="st">&quot;/&quot;</span>, <span class="st">&quot;Wheat.apsimx&quot;</span>), tmp.dir2)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">apsimx</span>(<span class="st">&quot;Wheat.apsimx&quot;</span>, <span class="at">src.dir =</span> tmp.dir2, <span class="at">value =</span> <span class="st">&quot;report&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="do">## Calcualte summary statistics on all variables</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="fu">summary</span>(sim)</span></code></pre></div>
+<pre><code>##   CheckpointID  SimulationID     Zone           Clock.Today       
+##  Min.   :1     Min.   :1     Length:79          Length:79         
+##  1st Qu.:1     1st Qu.:1     Class :character   Class :character  
+##  Median :1     Median :1     Mode  :character   Mode  :character  
+##  Mean   :1     Mean   :1                                          
+##  3rd Qu.:1     3rd Qu.:1                                          
+##  Max.   :1     Max.   :1                                          
+##  Wheat.Phenology.Zadok.Stage Wheat.Phenology.CurrentStageName
+##  Min.   :0                   Length:79                       
+##  1st Qu.:0                   Class :character                
+##  Median :0                   Mode  :character                
+##  Mean   :0                                                   
+##  3rd Qu.:0                                                   
+##  Max.   :0                                                   
+##  Wheat.AboveGround.Wt Wheat.AboveGround.N     Yield        Wheat.Grain.Protein
+##  Min.   :  64.59      Min.   : 2.619      Min.   : 251.3   Min.   :10.78      
+##  1st Qu.: 766.44      1st Qu.:22.448      1st Qu.:3155.3   1st Qu.:15.12      
+##  Median :1061.98      Median :26.816      Median :4050.3   Median :15.15      
+##  Mean   :1029.24      Mean   :25.734      Mean   :4126.6   Mean   :15.08      
+##  3rd Qu.:1355.02      3rd Qu.:30.893      3rd Qu.:5347.4   3rd Qu.:15.20      
+##  Max.   :1654.14      Max.   :35.665      Max.   :7204.5   Max.   :15.35      
+##  Wheat.Grain.Size  Wheat.Grain.Number Wheat.Grain.Total.Wt Wheat.Grain.Total.N
+##  Min.   :0.01992   Min.   : 1112      Min.   : 25.13       Min.   : 0.6662    
+##  1st Qu.:0.02196   1st Qu.:13475      1st Qu.:315.53       1st Qu.: 8.3994    
+##  Median :0.02334   Median :17118      Median :405.03       Median :10.6031    
+##  Mean   :0.02492   Mean   :16240      Mean   :412.66       Mean   :10.9070    
+##  3rd Qu.:0.02646   3rd Qu.:19980      3rd Qu.:534.74       3rd Qu.:14.1672    
+##  Max.   :0.04120   Max.   :24042      Max.   :720.45       Max.   :19.2557    
+##  Wheat.Total.Wt         Date           
+##  Min.   :  79.04   Min.   :1900-11-14  
+##  1st Qu.: 889.73   1st Qu.:1927-05-14  
+##  Median :1236.50   Median :1953-11-01  
+##  Mean   :1193.27   Mean   :1952-08-20  
+##  3rd Qu.:1563.53   3rd Qu.:1978-05-23  
+##  Max.   :1922.30   Max.   :2000-11-18</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="do">## Plot data</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> sim, <span class="fu">aes</span>(<span class="at">x =</span> Date, <span class="at">y =</span> Yield)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="do">## Inspect the Wheat .apsimx file</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Wheat.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">node =</span> <span class="st">&quot;Crop&quot;</span>)</span></code></pre></div>
+<pre><code>## 
+## 
+## |parm         |value  |
+## |:------------|:------|
+## |StartDate    |1-may  |
+## |EndDate      |10-jul |
+## |MinESW       |100    |
+## |MinRain      |25     |
+## |RainDays     |7      |
+## |CultivarName |Hartog |
+## |SowingDepth  |30     |
+## |RowSpacing   |250    |
+## |Population   |120    |</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="do">## This only displays the available &#39;Manager&#39; components</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Wheat.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">node =</span> <span class="st">&quot;Manager&quot;</span>)</span></code></pre></div>
+<pre><code>## Management Scripts:  SowingFertiliser Harvest SowingRule1</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="do">## Looking more in-depth into &#39;SowingRule1&#39;</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Wheat.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir, </span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>               <span class="at">node =</span> <span class="st">&quot;Manager&quot;</span>, <span class="at">parm =</span> <span class="fu">list</span>(<span class="st">&quot;SowingRule1&quot;</span>, <span class="cn">NA</span>))</span></code></pre></div>
+<pre><code>## Management Scripts:  SowingFertiliser Harvest SowingRule1 
+## 
+## Name:  SowingRule1 
+## 
+## 
+## |parm         |value  |
+## |:------------|:------|
+## |StartDate    |1-may  |
+## |EndDate      |10-jul |
+## |MinESW       |100    |
+## |MinRain      |25     |
+## |RainDays     |7      |
+## |CultivarName |Hartog |
+## |SowingDepth  |30     |
+## |RowSpacing   |250    |
+## |Population   |120    |</code></pre>
+<p>If you only want to display the Wheat cultivar choose the sixth
+element in that table.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Wheat.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir, </span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>               <span class="at">node =</span> <span class="st">&quot;Manager&quot;</span>, <span class="at">parm =</span> <span class="fu">list</span>(<span class="st">&quot;SowingRule1&quot;</span>, <span class="dv">6</span>))</span></code></pre></div>
+<pre><code>## Management Scripts:  SowingFertiliser Harvest SowingRule1 
+## 
+## Name:  SowingRule1 
+## Key: CultivarName 
+## 
+## 
+## |parm         |value  |
+## |:------------|:------|
+## |CultivarName |Hartog |</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="do">## We can print and store the path to this parameter</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>pp <span class="ot">&lt;-</span> <span class="fu">inspect_apsimx</span>(<span class="st">&quot;Wheat.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir, </span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>               <span class="at">node =</span> <span class="st">&quot;Manager&quot;</span>, <span class="at">parm =</span> <span class="fu">list</span>(<span class="st">&quot;SowingRule1&quot;</span>, <span class="dv">6</span>),</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>               <span class="at">print.path =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Management Scripts:  SowingFertiliser Harvest SowingRule1 
+## 
+## Name:  SowingRule1 
+## Key: CultivarName 
+## 
+## 
+## |parm         |value  |
+## |:------------|:------|
+## |CultivarName |Hartog |
+## 
+## Parm path: .Simulations.Simulation.Field.SowingRule1.CultivarName</code></pre>
+</div>
+<div id="millet-example-apsim-classic" class="section level2">
+<h2>Millet example (APSIM ‘Classic’)</h2>
+<p>One of the difficulties with working with APSIM(X) in scripting
+efforts is that the names of the parameters that we might want to edit
+can be buried deep in the .apsim(x) file and that there might be
+multiple instances of those parameters. To overcome this (to some
+extent) the ‘inspect’ functions can provide the path to the parameter to
+edit. For example,</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">inspect_apsim</span>(<span class="st">&quot;Millet.apsim&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">node  =</span> <span class="st">&quot;Manager&quot;</span>)</span></code></pre></div>
+<pre><code>## Crop Type:  millet 
+## Management Scripts:
+## Sow on a fixed date
+## Harvesting rule
+## Tiller Aggregation</code></pre>
+<p>We can see that we have ‘Sow on a fixed date’ as one of the options.
+Let’s say that we want to edit the planting density</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">inspect_apsim</span>(<span class="st">&quot;Millet.apsim&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">node  =</span> <span class="st">&quot;Manager&quot;</span>,</span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>              <span class="at">parm =</span> <span class="fu">list</span>(<span class="st">&quot;Sow on a fixed date&quot;</span>, <span class="cn">NA</span>))</span></code></pre></div>
+<pre><code>## Crop Type:  millet 
+## Management Scripts:
+## Sow on a fixed date
+## Harvesting rule
+## Tiller Aggregation
+## 
+## 
+## Selected manager:  Sow on a fixed date 
+## 
+## 
+## |parm                                |value   |
+## |:-----------------------------------|:-------|
+## |Sowing criteria                     |        |
+## |Enter sowing date (dd-mmm) :        |1-dec   |
+## |Sowing parameters                   |        |
+## |Enter name of crop to sow :         |millet  |
+## |Enter sowing density  (plants/m2) : |7.5     |
+## |Enter sowing depth  (mm) :          |30      |
+## |Enter cultivar :                    |wrajpop |</code></pre>
+<p>Planting density is the fifth element in that table. We can obtain
+the full path by using the ‘print.path’ option. It makes sense to use
+this option once you have found the parameter you are looking for.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">inspect_apsim</span>(<span class="st">&quot;Millet.apsim&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">node  =</span> <span class="st">&quot;Manager&quot;</span>,</span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>              <span class="at">parm =</span> <span class="fu">list</span>(<span class="st">&quot;Sow on a fixed date&quot;</span>,<span class="dv">5</span>), <span class="at">print.path =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Crop Type:  millet 
+## Management Scripts:
+## Sow on a fixed date
+## Harvesting rule
+## Tiller Aggregation
+## 
+## 
+## Selected manager:  Sow on a fixed date 
+## 
+## 
+## |   |parm                                |value |
+## |:--|:-----------------------------------|:-----|
+## |5  |Enter sowing density  (plants/m2) : |7.5   |
+## Parm path: /folder/simulation/area/folder/manager[1]/ui/density</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="do">## Or store it in an object for later editing</span></span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>pp <span class="ot">&lt;-</span> <span class="fu">inspect_apsim</span>(<span class="st">&quot;Millet.apsim&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">node =</span> <span class="st">&quot;Manager&quot;</span>,</span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a>              <span class="at">parm =</span> <span class="fu">list</span>(<span class="st">&quot;Sow on a fixed date&quot;</span>, <span class="dv">5</span>), <span class="at">print.path =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Crop Type:  millet 
+## Management Scripts:
+## Sow on a fixed date
+## Harvesting rule
+## Tiller Aggregation
+## 
+## 
+## Selected manager:  Sow on a fixed date 
+## 
+## 
+## |   |parm                                |value |
+## |:--|:-----------------------------------|:-----|
+## |5  |Enter sowing density  (plants/m2) : |7.5   |
+## Parm path: /folder/simulation/area/folder/manager[1]/ui/density</code></pre>
+<p>Once we have identified the parameter we want to edit, we can do so
+by using the ‘edit_apsim’ function. When using the ‘parm.path’ argument,
+node should be “Other”.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">edit_apsim</span>(<span class="st">&quot;Millet.apsim&quot;</span>, <span class="at">src.dir =</span> extd.dir, <span class="at">wrt.dir =</span> tmp.dir,</span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>           <span class="at">node =</span> <span class="st">&quot;Other&quot;</span>, <span class="at">parm.path =</span> pp, <span class="at">value =</span> <span class="dv">8</span>, </span>
+<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a>           <span class="at">edit.tag =</span> <span class="st">&quot;-pp&quot;</span>)</span></code></pre></div>
+<pre><code>## Edited /folder/simulation/area/folder/manager[1]/ui/density 
+## Edited parameter 
+## New values  8 
+## Created  /var/folders/6j/xksd1tld70q91h73d5s0ln7c0000gn/T//Rtmp9sz6Nx/Millet-pp.apsim</code></pre>
+<p>Verify that it was edited correctly.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="fu">inspect_apsim</span>(<span class="st">&quot;Millet-pp.apsim&quot;</span>, <span class="at">src.dir =</span> tmp.dir,</span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>              <span class="at">node =</span> <span class="st">&quot;Manager&quot;</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>              <span class="at">parm =</span> <span class="fu">list</span>(<span class="st">&quot;Sow on a fixed date&quot;</span>, <span class="cn">NA</span>))</span></code></pre></div>
+<pre><code>## Crop Type:  millet 
+## Management Scripts:
+## Sow on a fixed date
+## Harvesting rule
+## Tiller Aggregation
+## 
+## 
+## Selected manager:  Sow on a fixed date 
+## 
+## 
+## |parm                                |value   |
+## |:-----------------------------------|:-------|
+## |Sowing criteria                     |        |
+## |Enter sowing date (dd-mmm) :        |1-dec   |
+## |Sowing parameters                   |        |
+## |Enter name of crop to sow :         |millet  |
+## |Enter sowing density  (plants/m2) : |8       |
+## |Enter sowing depth  (mm) :          |30      |
+## |Enter cultivar :                    |wrajpop |</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+</div>
+<div id="advanced-examples" class="section level1">
+<h1>Advanced Examples</h1>
+<div id="inspecting-a-replacement-component" class="section level2">
+<h2>Inspecting a ‘Replacement’ component</h2>
+<p>Many additional options in an APSIM-X simulation can be realized
+through the use of ‘Replacements’. For this, there is a function that
+allows inspection. In this case, it is important to know the structure
+of the ‘replacement’ and explore the available components. For example,
+if we want to display the xy pair for the thermal time in the phenology
+component of the ‘Maize’ replacement we might go through the following
+steps:</p>
+<p>State the node (“Maize”) and display available components:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Maize&quot;</span>, <span class="at">display.available =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Maize 
+## Level: node 
+## list Name: Maize 
+## list length: 11 
+## list names: $type PlantType IsAlive IsEnding DaysAfterEnding ResourceName Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 21 
+## Children Names: Arbitrator Phenology Structure Grain Root Leaf Husk Rachis Stem AboveGround BelowGround Total TotalLive TotalDead EarLive AboveGroundLive AboveGroundDead Future Development Needs CultivarFolder Spike MortalityRate 
+## missing node.child</code></pre>
+<p>Choose ‘Phenology’ as a ‘child’ of ‘Maize’:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Maize&quot;</span>, <span class="at">node.child =</span> <span class="st">&quot;Phenology&quot;</span>,</span>
+<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a>                           <span class="at">display.available =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Maize 
+## Level: node 
+## list Name: Maize 
+## list length: 11 
+## list names: $type PlantType IsAlive IsEnding DaysAfterEnding ResourceName Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 21 
+## Children Names: Arbitrator Phenology Structure Grain Root Leaf Husk Rachis Stem AboveGround BelowGround Total TotalLive TotalDead EarLive AboveGroundLive AboveGroundDead Future Development Needs CultivarFolder Spike MortalityRate 
+## node child: Phenology 
+## list Name: Phenology 
+## list length: 6 
+## list names: $type Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 16 
+## Children Names: ThermalTime Germinating Emerging Juvenile Photosensitive LeafAppearance FlagLeafToFlowering FloweringToGrainFilling GrainFilling Maturing MaturityToHarvestRipe ReadyForHarvesting Photoperiod FloweringDAS MaturityDAS BBCH 
+## node subchild: 
+## missing node.subchild</code></pre>
+<p>Choose ‘ThermalTime’ as a ‘sub.child’ of ‘Phenology’:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Maize&quot;</span>, <span class="at">node.child =</span> <span class="st">&quot;Phenology&quot;</span>,</span>
+<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a>                           <span class="at">node.subchild =</span> <span class="st">&quot;ThermalTime&quot;</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a>                           <span class="at">display.available =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Maize 
+## Level: node 
+## list Name: Maize 
+## list length: 11 
+## list names: $type PlantType IsAlive IsEnding DaysAfterEnding ResourceName Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 21 
+## Children Names: Arbitrator Phenology Structure Grain Root Leaf Husk Rachis Stem AboveGround BelowGround Total TotalLive TotalDead EarLive AboveGroundLive AboveGroundDead Future Development Needs CultivarFolder Spike MortalityRate 
+## node child: Phenology 
+## list Name: Phenology 
+## list length: 6 
+## list names: $type Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 16 
+## Children Names: ThermalTime Germinating Emerging Juvenile Photosensitive LeafAppearance FlagLeafToFlowering FloweringToGrainFilling GrainFilling Maturing MaturityToHarvestRipe ReadyForHarvesting Photoperiod FloweringDAS MaturityDAS BBCH 
+## node subchild: ThermalTime 
+## Subchild Name:  ThermalTime 
+## list Name: ThermalTime 
+## list length: 6 
+## list names: $type Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 1 
+## Children Names: BaseThermalTime 
+## missing node.subsubchild</code></pre>
+<p>Now we need to pick from within ‘ThermalTime’. There is a component
+named “BaseThermalTime”.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Maize&quot;</span>, <span class="at">node.child =</span> <span class="st">&quot;Phenology&quot;</span>,</span>
+<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a>                           <span class="at">node.subchild =</span> <span class="st">&quot;ThermalTime&quot;</span>, </span>
+<span id="cb48-4"><a href="#cb48-4" tabindex="-1"></a>                           <span class="at">node.subsubchild =</span> <span class="st">&quot;BaseThermalTime&quot;</span>,</span>
+<span id="cb48-5"><a href="#cb48-5" tabindex="-1"></a>                           <span class="at">display.available =</span> <span class="cn">TRUE</span>) </span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Maize 
+## Level: node 
+## list Name: Maize 
+## list length: 11 
+## list names: $type PlantType IsAlive IsEnding DaysAfterEnding ResourceName Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 21 
+## Children Names: Arbitrator Phenology Structure Grain Root Leaf Husk Rachis Stem AboveGround BelowGround Total TotalLive TotalDead EarLive AboveGroundLive AboveGroundDead Future Development Needs CultivarFolder Spike MortalityRate 
+## node child: Phenology 
+## list Name: Phenology 
+## list length: 6 
+## list names: $type Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 16 
+## Children Names: ThermalTime Germinating Emerging Juvenile Photosensitive LeafAppearance FlagLeafToFlowering FloweringToGrainFilling GrainFilling Maturing MaturityToHarvestRipe ReadyForHarvesting Photoperiod FloweringDAS MaturityDAS BBCH 
+## node subchild: ThermalTime 
+## Subchild Name:  ThermalTime 
+## list Name: ThermalTime 
+## list length: 6 
+## list names: $type Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 1 
+## Children Names: BaseThermalTime 
+## Name sub-sub-child:  BaseThermalTime 
+## Available node children (unpack_node):  
+## $type : Models.Functions.XYPairs, Models 
+## X : 0 18 26 34 44 
+## Y : 0 10 18 26 0 
+## Name : Response 
+## Children : 
+## IncludeInDocumentation : TRUE 
+## Enabled : TRUE 
+## ReadOnly : FALSE 
+##  
+## $type : Models.Functions.ThreeHourSin, Models 
+## TempRangeFactors : 
+## Name : InterpolationMethod 
+## Children : 
+## IncludeInDocumentation : TRUE 
+## Enabled : TRUE 
+## ReadOnly : FALSE 
+##  
+## missing node.sub3child</code></pre>
+<p>‘BaseThermalTime’ is the only child inside ‘ThermalTime’, but within
+‘BaseThermalTime’ there are two Children: ‘Response’ and
+‘InterpolationMethod’. There is not much to edit for
+‘InterpolationMethod’, so we choose ‘Response’.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb50-2"><a href="#cb50-2" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Maize&quot;</span>, <span class="at">node.child =</span> <span class="st">&quot;Phenology&quot;</span>,</span>
+<span id="cb50-3"><a href="#cb50-3" tabindex="-1"></a>                           <span class="at">node.subchild =</span> <span class="st">&quot;ThermalTime&quot;</span>, </span>
+<span id="cb50-4"><a href="#cb50-4" tabindex="-1"></a>                           <span class="at">node.subsubchild =</span> <span class="st">&quot;BaseThermalTime&quot;</span>,</span>
+<span id="cb50-5"><a href="#cb50-5" tabindex="-1"></a>                           <span class="at">node.sub3child =</span> <span class="st">&quot;Response&quot;</span>) </span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Maize 
+## node child: Phenology 
+## node subchild: ThermalTime 
+## Subchild Name:  ThermalTime 
+## Name sub-sub-child:  BaseThermalTime 
+## Name sub-sub-sub-child:  Response 
+## $type : Models.Functions.XYPairs, Models 
+## X : 0 18 26 34 44 
+## Y : 0 10 18 26 0 
+## Name : Response 
+## Children : 
+## IncludeInDocumentation : TRUE 
+## Enabled : TRUE 
+## ReadOnly : FALSE</code></pre>
+<p>Choose the ‘Y’ parameter within ‘Response’.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Maize&quot;</span>, <span class="at">node.child =</span> <span class="st">&quot;Phenology&quot;</span>,</span>
+<span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a>                           <span class="at">node.subchild =</span> <span class="st">&quot;ThermalTime&quot;</span>, </span>
+<span id="cb52-4"><a href="#cb52-4" tabindex="-1"></a>                           <span class="at">node.subsubchild =</span> <span class="st">&quot;BaseThermalTime&quot;</span>,</span>
+<span id="cb52-5"><a href="#cb52-5" tabindex="-1"></a>                           <span class="at">node.sub3child =</span> <span class="st">&quot;Response&quot;</span>,</span>
+<span id="cb52-6"><a href="#cb52-6" tabindex="-1"></a>                           <span class="at">parm =</span> <span class="st">&quot;Y&quot;</span>) </span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Maize 
+## node child: Phenology 
+## node subchild: ThermalTime 
+## Subchild Name:  ThermalTime 
+## Name sub-sub-child:  BaseThermalTime 
+## Name sub-sub-sub-child:  Response 
+## Y : 0 10 18 26 0</code></pre>
+<p>The function shows the available replacements (“Maize” and
+“Soybean”), the ‘CropType’ if available, the subchild name and the ‘Y’
+vector in this example. If parm is not specified all elements will be
+displayed.</p>
+<p>Let’s say we want to inspect details of soybean cultivars in the same
+file:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Soybean&quot;</span>, <span class="at">display.available =</span> <span class="cn">TRUE</span>) </span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Soybean 
+## Level: node 
+## list Name: Soybean 
+## list length: 11 
+## list names: $type PlantType IsAlive IsEnding DaysAfterEnding ResourceName Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 17 
+## Children Names: Arbitrator Phenology Leaf Grain Root Nodule Shell Stem AboveGround BelowGround AboveGroundLive Total TotalLive TotalDead Pod MortalityRate Cultivars 
+## missing node.child</code></pre>
+<p>The cultivars are at the node.child level.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, </span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>                           <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Soybean&quot;</span>, </span>
+<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>                           <span class="at">node.child =</span> <span class="st">&quot;Cultivars&quot;</span>,</span>
+<span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a>                           <span class="at">node.subchild =</span> <span class="st">&quot;USA&quot;</span>,</span>
+<span id="cb56-6"><a href="#cb56-6" tabindex="-1"></a>                           <span class="at">node.subsubchild =</span> <span class="st">&quot;PioneerP22T61_MG22&quot;</span>,</span>
+<span id="cb56-7"><a href="#cb56-7" tabindex="-1"></a>                           <span class="at">display.available =</span> <span class="cn">FALSE</span>) </span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Soybean 
+## node child: Cultivars 
+## node subchild: USA 
+## Subchild Name:  USA 
+## Name sub-sub-child:  PioneerP22T61_MG22 
+## $type : Models.PMF.Cultivar, Models 
+##  : [Phenology].Vegetative.Target.FixedValue = 328 
+##  : [Phenology].EarlyFlowering.Target.FixedValue = 106 
+##  : [Phenology].EarlyGrainFilling.Target.FractionofGrainfilling.FixedValue = 0.3 
+##  : [Phenology].LateGrainFilling.Target.EntireGrainfillPeriod.FixedValue = 499 
+##  : [Phenology].VegetativePhotoperiodModifier.XYPairs.X = 13.59, 17.6 
+##  : [Phenology].ReproductivePhotoperiodModifier.XYPairs.X = 13.59, 17.6 
+## Command 
+## Name : PioneerP22T61_MG22 
+## IncludeInDocumentation : TRUE 
+## Enabled : TRUE 
+## ReadOnly : FALSE 
+## no node sub-sub-sub-children available or parm is not null</code></pre>
+<p>The function <strong>inspect_apsimx_replacement</strong> can also be
+used to inspect more complex file structures such as the ‘Factorial’
+example distributed with APSIM-X. See ‘?inspect_apsimx_replacement’.</p>
+</div>
+<div id="editing-a-replacement" class="section level2">
+<h2>Editing a ‘Replacement’</h2>
+<p>After using the ‘inspect’ version of the file, editing should be much
+more straight forward.</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="fu">edit_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean.apsimx&quot;</span>, </span>
+<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a>                        <span class="at">src.dir =</span> extd.dir, <span class="at">wrt.dir =</span> tmp.dir,</span>
+<span id="cb58-3"><a href="#cb58-3" tabindex="-1"></a>                        <span class="at">node =</span> <span class="st">&quot;Maize&quot;</span>, <span class="at">node.child =</span> <span class="st">&quot;Phenology&quot;</span>,</span>
+<span id="cb58-4"><a href="#cb58-4" tabindex="-1"></a>                        <span class="at">node.subchild =</span> <span class="st">&quot;ThermalTime&quot;</span>, </span>
+<span id="cb58-5"><a href="#cb58-5" tabindex="-1"></a>                        <span class="at">node.subsubchild =</span> <span class="st">&quot;BaseThermalTime&quot;</span>,</span>
+<span id="cb58-6"><a href="#cb58-6" tabindex="-1"></a>                        <span class="at">node.sub3child =</span> <span class="st">&quot;Response&quot;</span>,</span>
+<span id="cb58-7"><a href="#cb58-7" tabindex="-1"></a>                        <span class="at">parm =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">12</span>, <span class="dv">20</span>, <span class="dv">28</span>, <span class="dv">0</span>))</span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## Available node children:  Arbitrator Phenology Structure Grain Root Leaf Husk Rachis Stem AboveGround BelowGround Total TotalLive TotalDead EarLive AboveGroundLive AboveGroundDead Future Development Needs CultivarFolder Spike MortalityRate 
+## Subchild Name:  ThermalTime 
+## Subsubchild Name:  BaseThermalTime 
+## Sub-sub-subchild Name:  Response 
+## Edited (node):  Maize 
+## Edited (node.child):  Phenology 
+## Edited (node.subchild):  ThermalTime 
+## Edited (node.subsubchild):  BaseThermalTime 
+## Edited (node.sub3child):  Response 
+## Edit (level):  6 
+## Edited parameter:  Y 
+## New values:  0 12 20 28 0 
+## Created:  /var/folders/6j/xksd1tld70q91h73d5s0ln7c0000gn/T//Rtmp9sz6Nx/MaizeSoybean-edited.apsimx</code></pre>
+<p>Let’s inspect the edited file</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;MaizeSoybean-edited.apsimx&quot;</span>, </span>
+<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a>                           <span class="at">src.dir =</span> tmp.dir,</span>
+<span id="cb60-3"><a href="#cb60-3" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Maize&quot;</span>, </span>
+<span id="cb60-4"><a href="#cb60-4" tabindex="-1"></a>                           <span class="at">node.child =</span> <span class="st">&quot;Phenology&quot;</span>,</span>
+<span id="cb60-5"><a href="#cb60-5" tabindex="-1"></a>                           <span class="at">node.subchild =</span> <span class="st">&quot;ThermalTime&quot;</span>, </span>
+<span id="cb60-6"><a href="#cb60-6" tabindex="-1"></a>                           <span class="at">node.subsubchild =</span> <span class="st">&quot;BaseThermalTime&quot;</span>,</span>
+<span id="cb60-7"><a href="#cb60-7" tabindex="-1"></a>                           <span class="at">node.sub3child =</span> <span class="st">&quot;Response&quot;</span>,</span>
+<span id="cb60-8"><a href="#cb60-8" tabindex="-1"></a>                           <span class="at">parm =</span> <span class="st">&quot;Y&quot;</span>) </span></code></pre></div>
+<pre><code>## Replacements:  Maize Soybean 
+## node: Maize 
+## node child: Phenology 
+## node subchild: ThermalTime 
+## Subchild Name:  ThermalTime 
+## Name sub-sub-child:  BaseThermalTime 
+## Name sub-sub-sub-child:  Response 
+## Y : 0 12 20 28 0</code></pre>
+</div>
+<div id="inspecting-and-editing-a-factorial" class="section level2">
+<h2>Inspecting and editing a Factorial</h2>
+<p>The complexity of APSIM-X files can be mind-boggling and it makes it
+difficult to write robust functions across all tasks that APSIM is able
+to accomplish. I wrote the ‘inspect_apsimx_replacement’ and
+‘edit_apsimx_replacement’ specifically to edit replacements but these
+functions have much more flexibility than ‘inspect_apsimx’ and
+‘edit_apsimx’. The function ‘apsimx_example’ is limited in the number of
+examples that it is allowed to run, but this does not mean that you
+cannot run the other examples which are distributed with APSIM-X. Let’s
+take the ‘Factorial’ example:</p>
+<p>If we want to inspect and edit this file, we need the
+‘inspect_apsimx_replacement’ function.</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="do">## There are multiple &#39;Experiments&#39; so we need to pick one</span></span>
+<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;Factorial&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a>                           <span class="at">root =</span> <span class="fu">list</span>(<span class="st">&quot;Experiment&quot;</span>, <span class="cn">NA</span>))</span>
+<span id="cb62-4"><a href="#cb62-4" tabindex="-1"></a><span class="do">##These positions matched  Experiment   1 2 3 4 5 </span></span>
+<span id="cb62-5"><a href="#cb62-5" tabindex="-1"></a><span class="do">##Error in inspect_apsimx_replacement(&quot;Factorial&quot;, src.dir = ex.dir, root = ##list(&quot;Experiment&quot;, : Multiple root nodes found. Please provide a position</span></span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a><span class="do">## There are multiple &#39;Experiments&#39; so we need to pick one</span></span>
+<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;Factorial&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb63-3"><a href="#cb63-3" tabindex="-1"></a>                           <span class="at">root =</span> <span class="fu">list</span>(<span class="st">&quot;Experiment&quot;</span>, <span class="dv">1</span>))</span></code></pre></div>
+<pre><code>## Warning in inspect_apsimx_replacement(&quot;Factorial&quot;, src.dir = extd.dir, root =
+## list(&quot;Experiment&quot;, : Node does not appear to be a &#39;Replacements&#39; node</code></pre>
+<pre><code>## Replacements:  Factors Base 
+## Please provide a node</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="do">## We need to provide a node</span></span>
+<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;Factorial&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>                           <span class="at">root =</span> <span class="fu">list</span>(<span class="st">&quot;Experiment&quot;</span>, <span class="dv">1</span>), </span>
+<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Base&quot;</span>, <span class="at">display.available =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Warning in inspect_apsimx_replacement(&quot;Factorial&quot;, src.dir = extd.dir, root =
+## list(&quot;Experiment&quot;, : Node does not appear to be a &#39;Replacements&#39; node</code></pre>
+<pre><code>## Replacements:  Factors Base 
+## node: Base 
+## Level: node 
+## list Name: Base 
+## list length: 7 
+## list names: $type Descriptors Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 4 
+## Children Names: Weather Clock Summary Field 
+## missing node.child</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a><span class="do">## We need to provide a node child</span></span>
+<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a><span class="fu">inspect_apsimx_replacement</span>(<span class="st">&quot;Factorial&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb69-3"><a href="#cb69-3" tabindex="-1"></a>                           <span class="at">root =</span> <span class="fu">list</span>(<span class="st">&quot;Experiment&quot;</span>, <span class="dv">1</span>), </span>
+<span id="cb69-4"><a href="#cb69-4" tabindex="-1"></a>                           <span class="at">node =</span> <span class="st">&quot;Base&quot;</span>, <span class="at">node.child =</span> <span class="st">&quot;Clock&quot;</span>,</span>
+<span id="cb69-5"><a href="#cb69-5" tabindex="-1"></a>                           <span class="at">display.available =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Warning in inspect_apsimx_replacement(&quot;Factorial&quot;, src.dir = extd.dir, root =
+## list(&quot;Experiment&quot;, : Node does not appear to be a &#39;Replacements&#39; node</code></pre>
+<pre><code>## Replacements:  Factors Base 
+## node: Base 
+## Level: node 
+## list Name: Base 
+## list length: 7 
+## list names: $type Descriptors Name Children IncludeInDocumentation Enabled ReadOnly 
+## Children: Yes 
+## Children length: 4 
+## Children Names: Weather Clock Summary Field 
+## node child: Clock 
+## Available node children (unpack_node):  $type StartDate EndDate Name Children IncludeInDocumentation Enabled ReadOnly 
+## $type : Models.Clock, Models 
+## StartDate : 2003-10-20T00:00:00 
+## EndDate : 2004-05-23T00:00:00 
+## Name : Clock 
+## IncludeInDocumentation : TRUE 
+## Enabled : TRUE 
+## ReadOnly : FALSE 
+## no node sub-children available or parm not equal to null</code></pre>
+<p>Here we stop at this level but it is possible to dig deeper using
+‘node.subchild’ and ‘node.subsubchild’. It is not possible at this point
+to dig deeper than ‘node.sub5child’ in the hierarchy level.</p>
+<p>The <strong>inspect_apsimx</strong> function can also handle
+factorials.</p>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Factorial.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir)</span>
+<span id="cb72-2"><a href="#cb72-2" tabindex="-1"></a><span class="do">## Simulation structure: </span></span>
+<span id="cb72-3"><a href="#cb72-3" tabindex="-1"></a><span class="do">## list Name: Simulations </span></span>
+<span id="cb72-4"><a href="#cb72-4" tabindex="-1"></a><span class="co"># list length: 8 </span></span>
+<span id="cb72-5"><a href="#cb72-5" tabindex="-1"></a><span class="co"># list names: $type ExplorerWidth Version Name Children IncludeInDocumentation Enabled ReadOnly </span></span>
+<span id="cb72-6"><a href="#cb72-6" tabindex="-1"></a><span class="co"># Children: Yes </span></span>
+<span id="cb72-7"><a href="#cb72-7" tabindex="-1"></a><span class="co"># Children length: 6 </span></span>
+<span id="cb72-8"><a href="#cb72-8" tabindex="-1"></a><span class="co"># Children Names: Experiment RangeExperiment OperationsExpt Compound ManagerExpt DataStore </span></span>
+<span id="cb72-9"><a href="#cb72-9" tabindex="-1"></a><span class="co"># Error in inspect_apsimx(&quot;Factorial&quot;, src.dir = ex.dir) : </span></span>
+<span id="cb72-10"><a href="#cb72-10" tabindex="-1"></a><span class="co">#   more than one simulation found and no root node label has been specified </span></span>
+<span id="cb72-11"><a href="#cb72-11" tabindex="-1"></a><span class="co">#  select one of the children names above</span></span></code></pre></div>
+<p>We need to pick one out of the possible factorials. If you check this
+file with the APSIM GUI, you’ll see that within ‘RangeExperiment’ there
+is ‘Factors’ and ‘Base2’, but the core simulation is within ‘Base2’. The
+‘root’ argument provides the specific factorial and the node ‘Base2’
+within that factorial.</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a><span class="fu">inspect_apsimx</span>(<span class="st">&quot;Factorial.apsimx&quot;</span>, <span class="at">src.dir =</span> extd.dir,</span>
+<span id="cb73-2"><a href="#cb73-2" tabindex="-1"></a>               <span class="at">root =</span> <span class="fu">c</span>(<span class="st">&quot;RangeExperiment&quot;</span>, <span class="st">&quot;Base2&quot;</span>),</span>
+<span id="cb73-3"><a href="#cb73-3" tabindex="-1"></a>               <span class="at">node =</span> <span class="st">&quot;Weather&quot;</span>)</span></code></pre></div>
+<pre><code>## Met file: WeatherFiles\lincoln.met</code></pre>
+<p>Following this structure, if we want to edit the path to the weather
+file we can use the following example.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a><span class="fu">edit_apsimx</span>(<span class="st">&quot;Factorial.apsimx&quot;</span>, </span>
+<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a>            <span class="at">src.dir =</span> extd.dir, <span class="at">wrt.dir =</span> tmp.dir,</span>
+<span id="cb75-3"><a href="#cb75-3" tabindex="-1"></a>            <span class="at">root =</span> <span class="fu">c</span>(<span class="st">&quot;RangeExperiment&quot;</span>, <span class="st">&quot;Base2&quot;</span>),</span>
+<span id="cb75-4"><a href="#cb75-4" tabindex="-1"></a>            <span class="at">node =</span> <span class="st">&quot;Weather&quot;</span>, </span>
+<span id="cb75-5"><a href="#cb75-5" tabindex="-1"></a>            <span class="at">value =</span> <span class="st">&quot;Ames.met&quot;</span>)</span></code></pre></div>
+<pre><code>## Edited (node):  Weather 
+## Edited (child):  none 
+## Edited parameters:  
+## New values:  Ames.met 
+## Created:  /var/folders/6j/xksd1tld70q91h73d5s0ln7c0000gn/T//Rtmp9sz6Nx/Factorial-edited.apsimx</code></pre>
+<p>I won’t be running the ‘Factorial’ example here, but if you are
+interested this is done in the folder ‘tests’ in the pacakge source.</p>
+</div>
+</div>
+<div id="apsim-inputs-weather-and-soil" class="section level1">
+<h1>APSIM Inputs: Weather and Soil</h1>
+<div id="obtaining-weather-data" class="section level2">
+<h2>Obtaining weather data</h2>
+<p>One of the easiest ways of generating weather data (“.met” files) is
+by using the ‘nasapower’ (<a href="https://github.com/ropensci/nasapower" class="uri">https://github.com/ropensci/nasapower</a>) or ‘GSODR’ (<a href="https://github.com/ropensci/GSODR" class="uri">https://github.com/ropensci/GSODR</a>) packages. For the US,
+some options are ‘daymetr’ (<a href="https://github.com/bluegreen-labs/daymetr" class="uri">https://github.com/bluegreen-labs/daymetr</a>) or through
+the Iowa Environmental Mesonet (<a href="https://mesonet.agron.iastate.edu/" class="uri">https://mesonet.agron.iastate.edu/</a>). In addition, this
+package provides the following utilities:</p>
+<ul>
+<li><strong>read_apsim_met</strong>: read an APSIM met file into R with
+S3 class ‘met’.</li>
+<li><strong>write_apsim_met</strong>: write an APSIM met file from an
+object of class ‘met’.</li>
+<li><strong>check_apsim_met</strong>: check for reasonable values for
+met variables.</li>
+<li><strong>impute_apsim_met</strong>: impute missing values using
+linear interpolation, splines or the mean.</li>
+<li><strong>napad_apsim_met</strong>: Fill in date gaps with NAs in a
+‘met’ object. Useful for imputation.</li>
+<li><strong>compare_apsim_met</strong>: utility for quick comparison of
+‘met’ objects. There is also a plot method.</li>
+<li><strong>get_power_apsim_met</strong>: (requires the ‘nasapower’
+package). Fetch data and create a ‘met’ R object and (optionally) write
+a met file to disk.</li>
+<li><strong>get_daymet2_apsim_met</strong>: (requires the ‘daymetr’
+package). Fetch data and create a ‘met’ R object and (optionally) write
+a met file to disk.</li>
+<li><strong>get_gsod_apsim_met</strong>: (requires the ‘GSODR’ package).
+Fetch data and create a ‘met’ R object and (optionally) write a met file
+to disk.</li>
+<li><strong>get_iem_apsim_met</strong>: Fetch data from Iowa
+Environmental Mesonet</li>
+<li><strong>get_iemre_apsim_met</strong>: Fetch data from Iowa
+Environmental Mesonet Reanalysis</li>
+<li><strong>get_worldmodeler_apsim_met</strong>: Fetch data from CSIRO
+Worldmodeler</li>
+<li><strong>plot</strong> plotting method for objects of class
+‘met’.</li>
+<li><strong>summary</strong> summary method for objects of class
+‘met’.</li>
+</ul>
+<p>Note that some utilities were available in the ‘APSIM’ package
+(loadMet, prepareMet, checkMet, writeMetFile) for reading, preparing,
+checking and writing a met file. However, that package has been removed
+from CRAN.</p>
+</div>
+<div id="obtaining-soil-data" class="section level2">
+<h2>Obtaining soil data</h2>
+<p>The function <strong>get_isric_soil_profile</strong> will retrieve
+data from the ISRIC Soil Grid global dataset (<a href="https://www.isric.org/" class="uri">https://www.isric.org/</a>)
+and return an object of class <em>soil_profile</em> (see also
+<em>apsimx_soil_profile</em>). To derive some of the properties needed
+by APSIM pedotransfer functions from Saxton and Rawls (2006) were used.
+This is a work in progress and improvements and suggestions are
+welcome.</p>
+<p>In the USA, the function <strong>get_ssurgo_soil_profile</strong>
+will retrieve data from the SSURGO database through the
+<strong>soilDB</strong> R pacakge and will always return a list with
+objects of class <em>soil_profile</em>. Internally, it uses the
+<strong>ssurgo2sp</strong> function, which can be used to create an
+APSIM soil profile in two steps. The first step would be to obtain soil
+data through the ‘FedData’ R package by using the function
+<strong>get_ssurgo</strong> or use the
+<strong>get_ssurgo_tables</strong> in apsimx. The function
+<strong>ssurgo2sp</strong> can be used for conversion from
+<strong>SSURGO</strong> csv files to an object of class
+<strong>soil_profile</strong> and <strong>apsimx_soil_profile</strong>
+for generating a soil profile that can be used in APSIM-X. Finally, the
+function <strong>edit_apsimx_replace_soil_profile</strong> will batch
+replace the soil profile created by <strong>apsimx_soil_profile</strong>
+in a designated ‘.apsimx’ file. Similarly,
+‘edit_apsim_replace_soil_profile’ will batch replace the soil profile in
+a designated ‘.apsim’ (Classic) file. I will be working on a more
+concrete tutorial at some point.</p>
+<p>In addition, there are is a function to compare soil profiles
+<strong>compare_apsim_soil_profile</strong>, which can be used to
+compare, numerically, one or more soil profiles and a
+<strong>plot</strong> method to visually compare this object.</p>
+</div>
+</div>
+<div id="file-type-or-file-format-details" class="section level1">
+<h1>File Type (or File Format) Details</h1>
+<p>APSIM has traditionally generated files that produce simulations
+using an XML schema. This has been used with APSIM versions of 7.x,
+‘Classic’. With APSIM-X a new format based on JSON files has been
+implemented and apparently both formats will be supported for the
+forseeable future. JSON files are less verbose and they are gaining
+widespread adoption. All distributed APSIM-X examples are ‘JSON’
+now.</p>
+<p>The apsimx package supports inspection and editing of both file
+types, but XML is for ‘Classic’ only and JSON is for APSIM-X. In most
+instances the parameters that are likely to need inspection and editing
+are supported, but more features will be added in the future as
+needed.</p>
+</div>
+<div id="additional-miscellaneous-functions" class="section level1">
+<h1>Additional miscellaneous functions</h1>
+<p><strong>apsim_version</strong>: displays which version(s) of APSIM(X)
+are available. For example,</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" tabindex="-1"></a>ava <span class="ot">&lt;-</span> <span class="fu">apsim_version</span>()</span>
+<span id="cb77-2"><a href="#cb77-2" tabindex="-1"></a>aiu <span class="ot">&lt;-</span> <span class="fu">apsim_version</span>(<span class="at">which =</span> <span class="st">&quot;inuse&quot;</span>)</span></code></pre></div>
+<p><strong>edit_apsimx_batch</strong>: Uses APSIM-X built-in
+functionality to edit parameters. In testing, it is slower than the
+other ’edit_apsimx*’ functions.</p>
+<p><strong>doy2date</strong>: Utility function for converting from day
+of the year (1-366) to ‘Date’ and performing the inverse conversion.</p>
+<p><strong>compare_apsim</strong>: Utility function for comparing
+simulations or observed and simulated data.</p>
+<p><strong>unit_conv</strong>: Unit conversion utility</p>
+<p><strong>carbon_stocks</strong>: function to calcualte carbon
+stocks.</p>
+<p><strong>check_apsim_met</strong>: check an object of class ‘met’</p>
+<p><strong>check_apsimx_soil_profile</strong>: check an object of class
+‘soil_profile’</p>
+</div>
+<div id="appendix" class="section level1">
+<h1>Appendix</h1>
+<p>Files in ‘inst/extdata’ and how they are used (ordered
+alphabetically):</p>
+<ul>
+<li><strong>Ames.met</strong>: used to run the Soybean.apsimx.</li>
+<li><strong>Factorial.apsimx</strong>: This file IS needed for the
+vignette.</li>
+<li><strong>ISUAG</strong> (folder): SSURGO files to test the ssurgo2sp
+function.</li>
+<li><strong>maize-factorial.apsim</strong> file used to test the ability
+to inspect and edit factorial .apsim files (see ‘inspect_apsim’).</li>
+<li><strong>maize-manager-folder.apsimx</strong>: file used to test
+whether I need to modify inspect and edit functions when the management
+is inside a folder.</li>
+<li><strong>maize-soybean-rotation.apsim</strong>: example file with a
+maize and soybean rotation used in testing and in the ‘inspect_apsim’
+file.</li>
+<li><strong>maize-swim.apsim</strong>: example file with the SWIM module
+for testing (test_apsim_swim.R).</li>
+<li><strong>Maize.apsimx</strong>: This file is needed for the
+vignette.</li>
+<li><strong>Maize.csv</strong>: This file is needed for the
+vignette.</li>
+<li><strong>Maize.out/sum</strong>: This file is needed for the
+‘read_apsim’ example.</li>
+<li><strong>Maize75.xml</strong>: This file is used in
+‘inspect_apsim_xml’ and optim vignette.</li>
+<li><strong>MaizeSoybean.apsimx</strong>: This file is needed for the
+vignette and for testing in ‘test_replacements.R’</li>
+<li><strong>Millet.apsim</strong>: Millet example from APSIM ‘Classic’
+for testing ‘inspect_apsim’ and used in the vignette.</li>
+<li><strong>Millet.out/sum</strong>: result from the Millet simulation.
+Used in the ‘read_apsim’ example.</li>
+<li><strong>Soybean.apsimx</strong>: Soybean example for APSIM-X. Used
+in ‘test_replacements.R’.</li>
+<li><strong>Wheat-opt-ex.apsimx</strong>: This file is used in the
+‘optim-apsim’ vignette.</li>
+<li><strong>wheat-sim-b4-opt.csv</strong>: This file is used in the
+‘optim-apsim’ vignette.</li>
+<li><strong>wheat-sim-opt.csv</strong>: This file is used in the
+‘optim-apsim’ vignette.</li>
+<li><strong>Wheat.apsimx</strong>: This file is used in the
+vignette.</li>
+<li><strong>Wheat.csv</strong>: This file is used in the vignette.</li>
+<li><strong>WheatRye.apsimx</strong>: This file is used in
+‘test_replacements.R’.</li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

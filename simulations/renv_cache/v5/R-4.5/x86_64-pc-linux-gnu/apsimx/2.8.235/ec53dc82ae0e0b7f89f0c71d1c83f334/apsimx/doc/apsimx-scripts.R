@@ -1,0 +1,24 @@
+## ----setup, include=FALSE-----------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE)
+##require(apsimx)
+
+## ----apsimx-windows, eval = FALSE---------------------------------------------
+# run.strng <- "C:/PROGRA~1/APSIM2024.2.7382.0/bin/Models.exe ./Wheat.apsimx"
+# shell(cmd = run.strng, translate = TRUE, intern = TRUE)
+
+## ----run-apsimx, eval = FALSE-------------------------------------------------
+# ## Mac
+# run.string.mac <- "mono /Applications/APSIM2021.01.14.6010.app/Contents/Resources/Bin/Models.exe ./Wheat.apsimx"
+# system(command = run.string.mac, intern = TRUE)
+# ## Debian
+# run.string.debian <- "mono /usr/local/lib/apsim/2019.10.04.4236/Bin/Models.exe ./Wheat.apsimx"
+# system(command = run.string.debian, intern = TRUE)
+
+## ----sisd, eval = FALSE-------------------------------------------------------
+# sessionInfo()
+# Sys.info()[["sysname"]]
+# Sys.info()[["release"]]
+# Sys.info()[["version"]]
+# if(.Platform$OS.type == "unix") system(command = "mono --version", intern = TRUE)
+# R.version
+
