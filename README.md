@@ -89,7 +89,9 @@ While many applications are built locally and difficult to share or iterate, the
 
 We iterated designs for using NDVI Satellite data to corroborate current stress indices and help with understanding spatial heterogeneity of stress, but while we were able to generate some graphs based on example data, we were not able to complete this strech goal in the project time frame.
 
-> TODO: Image of NDVI dashboard experiments
+![NDVI Integration Prototype](/images/ndvi_improvements.png)
+
+> Our NDVI Integration Prototype (Did not make current Dashboard prototype).
 
 ### Data Sources
 
