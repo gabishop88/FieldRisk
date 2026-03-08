@@ -338,3 +338,34 @@ def build_fig(df, selected_lines, selected_stresses, today):
 
 
 st.plotly_chart(build_fig(df, selected_lines, selected_stresses, today), use_container_width=True)
+
+
+# =============================================================================
+# Decision Recommendations
+# =============================================================================
+with st.expander("Decision Recommendations", expanded=True):
+    heat_risk = (df["MaxT"] > 35).any()
+    cold_risk = (df["MinT"] < 0).any()
+    low_rain  = df["Rain"].sum() < 5
+    avg_water_stress = df["WaterStress"].mean()
+
+    result_vals = df["Result"].dropna()
+    sim_result  = result_vals.iloc[0] if not result_vals.empty else "Unknown"
+
+    if "Harvested" in str(sim_result):
+        st.success("**Harvested at maturity.** Planting configuration is viable.")
+    else:
+        st.error(f"**{sim_result}** — consider adjusting planting date or maturity group.")
+
+    if cold_risk:
+        cold_days = df[df["MinT"] < 0]
+        st.warning(f"**Frost risk detected.** Min temp below 0 °C on {len(cold_days)} day(s).")
+    if heat_risk:
+        hot_days = df[df["MaxT"] > 35]
+        st.warning(f"**Heat stress detected.** Max temp exceeds 35 °C on {len(hot_days)} day(s).")
+    if low_rain:
+        st.warning(f"**Dry conditions.** Total rainfall only {df['Rain'].sum():.1f} mm.")
+    if avg_water_stress < 0.85:
+        st.warning(f"**Simulated water stress** (avg {avg_water_stress:.2f}).")
+    if not cold_risk and not heat_risk and not low_rain and avg_water_stress >= 0.85:
+        st.success("**No immediate action needed.** Outlook is favorable.")
