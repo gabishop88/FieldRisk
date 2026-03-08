@@ -33,16 +33,16 @@ RUN R -e 'install.packages("remotes")'
 RUN R -e 'remotes::install_version("renv", version = "1.0.3")'
 
 # Copy the renv cache into the image
-COPY simulations/renv_cache /root/.cache/R/renv
+COPY app/simulations/renv_cache /root/.cache/R/renv
 
 # Copy and restore the R project package environment
-COPY simulations/renv.lock renv.lock
+COPY app/simulations/renv.lock renv.lock
 RUN R -e 'renv::restore()'
 
 # Copy APSIM-X files to the Docker image (version 2025.4.7717.0)
-COPY simulations/next_gen_apsim/data.tar.gz /tmp/
-COPY simulations/next_gen_apsim/control.tar.gz /tmp/
-COPY simulations/next_gen_apsim/debian-binary /tmp/
+COPY app/simulations/next_gen_apsim/data.tar.gz /tmp/
+COPY app/simulations/next_gen_apsim/control.tar.gz /tmp/
+COPY app/simulations/next_gen_apsim/debian-binary /tmp/
 
 # Extract APSIM files to a permanent location and clean up temp files
 RUN tar -xzf /tmp/data.tar.gz -C / && \
