@@ -1,27 +1,28 @@
-# Use a geospatial-enabled R base image
-FROM rocker/geospatial:4.5.1
+FROM rocker/r-ver:4.4.0
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 # Install required system dependencies for R packages and tools like APSIM
-#RUN apt-get update -y && apt-get install -y  make pandoc zlib1g-dev libxml2-dev libicu-dev cmake libgdal-dev gdal-bin libgeos-dev libcurl4-openssl-dev libssl-dev libproj-dev libsqlite3-dev libudunits2-dev libx11-dev libnetcdf-dev libfontconfig1-dev libfreetype6-dev libfribidi-dev libharfbuzz-dev libjpeg-dev libpng-dev libtiff-dev git wget tar && rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update -y && apt-get install -y \
   zlib1g-dev \
   git \
   wget \
+  curl \
+  unzip \
   tar \
   apt-transport-https \
-  software-properties-common \
   ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Microsoft package feed for .NET
-RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm packages-microsoft-prod.deb
+# RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+#     dpkg -i packages-microsoft-prod.deb && \
+#     rm packages-microsoft-prod.deb
 
 # Install .NET runtime 
-RUN apt-get update && apt-get install -y dotnet-runtime-8.0 && \
-    rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y dotnet-runtime-8.0 && \
+#     rm -rf /var/lib/apt/lists/*
 
 # Set up global R options for all sessions
 RUN mkdir -p /usr/local/lib/R/etc/ /usr/lib/R/etc/
@@ -32,16 +33,16 @@ RUN R -e 'install.packages("remotes")'
 RUN R -e 'remotes::install_version("renv", version = "1.0.3")'
 
 # Copy the renv cache into the image
-COPY renv_cache /root/.cache/R/renv
+COPY simulations/renv_cache /root/.cache/R/renv
 
 # Copy and restore the R project package environment
-COPY renv.lock renv.lock
+COPY simulations/renv.lock renv.lock
 RUN R -e 'renv::restore()'
 
 # Copy APSIM-X files to the Docker image (version 2025.4.7717.0)
-COPY next_gen_apsim/data.tar.gz /tmp/
-COPY next_gen_apsim/control.tar.gz /tmp/
-COPY next_gen_apsim/debian-binary /tmp/
+COPY simulations/next_gen_apsim/data.tar.gz /tmp/
+COPY simulations/next_gen_apsim/control.tar.gz /tmp/
+COPY simulations/next_gen_apsim/debian-binary /tmp/
 
 # Extract APSIM files to a permanent location and clean up temp files
 RUN tar -xzf /tmp/data.tar.gz -C / && \
@@ -51,3 +52,14 @@ RUN tar -xzf /tmp/data.tar.gz -C / && \
 # Add APSIM-X to environment path
 ENV APSIM_PATH=/usr/local/apsimx
 ENV PATH=$APSIM_PATH:$PATH
+
+WORKDIR /app
+
+COPY pyproject.toml uv.lock ./
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+RUN uv sync --frozen --no-dev
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+EXPOSE 8501
+CMD ["streamlit", "run", "main.py", "--server.address=0.0.0.0"]
