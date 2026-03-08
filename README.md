@@ -39,8 +39,9 @@ Failure to detect stress early can lead to:
 
 - Historical Weather Data from the NASA Power API
 - Short-term Weather Forecase from the OpenMeteo API
+- Soil data from ISRIC World Soils API
 - Custom Weighted Sum-based long-term weather prediction
-- Apsim Simulations for simulated crop stress and environemental covariates.
+- Apsim Simulations for simulated crop stress and environmental covariates.
 
 ### Outputs
 
