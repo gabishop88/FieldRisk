@@ -67,16 +67,34 @@ Failure to detect stress early can lead to:
 
 > The dashboard is built in **Streamlit** with **Plotly** visualizations.
 
-### Baseline
+### Baselines & Our Approach
 
-?? 
+#### APSIM
 
-### Our Approach
+Our project is built on APSIM for prediction and environmental covariate estimation. Our environmental covariates are a relatively new approach compared to most APSIM projects. We can improve this by better integrating APSIM (an R package) with our Python-based project.
+
+#### Weather Prediction
+
+We use a weighted sum for weather prediction. This can be improved through modeling tools such as fitting a weighted regression function, or using trained meteorological ML models, though few exist with the long-term rage we require.
+
+#### Action Recommmendations
+
+Similar projects rely on LLM prediction for recommendations, but often do so with insufficient input data for accurate or non-generic recommendations. Our recommendations are basic for now, not utilizing an LLM, but a future improvement to incorporate LLM recommendation generation can be much more accurate due to the simulated data than recommendations without that foundation.
+
+#### Docker
+
+While many applications are built locally and difficult to share or iterate, the Field Risk Dashboard is built with Docker from the ground up for easy sharing and development, regardless of the local machine.
+
+#### NDVI Integration
+
+We iterated designs for using NDVI Satellite data to corroborate current stress indices and help with understanding spatial heterogeneity of stress, but while we were able to generate some graphs based on example data, we were not able to complete this strech goal in the project time frame.
+
+> TODO: Image of NDVI dashboard experiments
 
 ### Data Sources
 
 | Source | Description | Sites |
-|--------|-------------|-------|
+| -------- | ------------- | ------- |
 | Sentinel-2 via Google Earth Engine | NDVI at 10m resolution, 2022 growing season | IAH1-4 |
 | Open-Meteo API | 16-day weather forecast (temp, rain, radiation) | IAH1-4 |
 | G2F 2022 Phenotypic Data | Field metadata (planting date, maturity, coordinates) | IAH1-4 |
@@ -87,42 +105,43 @@ All data is public. No private keys are required.
 
 ### Preprocessing Pipeline
 
-| Notebook | Purpose |
-|----------|---------|
-
-| `forecast.ipynb` | Fetch and format Open-Meteo 16-day forecast |
-| `nasa_power_download.ipynb` | Download NASA POWER weather data for .met files |
-
-
-## Results
-
-
-- **Risk score:** 
-- **Maturity advisor:** 
-- **Decision recommendations:** Banners update dynamically based on site and year selection, producing appropriate urgency levels.
+> TODO: put in image of flowchart
 
 ## Run Instructions
 
-### Quick Start (Local)
+### Quick Start (Docker, localhost)
 
-```bash
-pip install streamlit pandas plotly numpy
-streamlit run dashboard.py
-```
+1. Install Docker Locally: [Guide](https://docs.docker.com/engine/install/)
+2. Clone repo into a local folder:
 
-### Docker
+    ```bash
+    git clone https://github.com/gabishop88/FieldRisk.git
+    ```
 
-```bash
-docker build -t fieldrisk .
-docker run -p 8501:8501 fieldrisk
-```
+3. Use `docker-compose` to create the container:
 
-Then open `http://localhost:8501` in your browser.
+    ```bash
+    docker compose up --build
+    ```
+
+    > **Tip**: Use `-d` to make the docker container start in the background instead of using the current terminal
+
+4. Then open `http://localhost:8501` in your browser.
 
 ### Judge Mode
 
 No external API keys are required. All data is bundled in the repository:
 
-The dashboard runs entirely offline from cached CSV files.???
+The dashboard runs entirely offline from cached `.csv` and `.met` files.
 
 ## Constraints and Limitations
+
+We were unable to get APSIM to function inside of a Docker container. This won't take too long to fix, but prevents the prototype version from having real-time simulation updates, insetad showing the simulated data for the example input only.
+
+Once APSIM functions properly, our Planting Date Recommendation feature will also work, but is reliant on the simulations.
+
+Right now, we have most of the data accessible through the Graphical Interface, but there are no options to download the data for additional review. This would be a simple feature that adds a lot, and would likely be one of the first additions to this project.
+
+We were not able to completely integrate current real NDVI data with our simulation data to validate simulated stress and show spatial heterogeneity of stress. This is another part of the dashboard that can be prototyped quickly.
+
+We have not integrated LLM recommendations. This would require relatively simple API integration, but was not within the scope of this prototype version.
