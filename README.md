@@ -157,3 +157,13 @@ Right now, we have most of the data accessible through the Graphical Interface, 
 We were not able to completely integrate current real NDVI data with our simulation data to validate simulated stress and show spatial heterogeneity of stress. This is another part of the dashboard that can be prototyped quickly.
 
 We have not integrated LLM recommendations. This would require relatively simple API integration, but was not within the scope of this prototype version.
+
+## AI Use Disclosure
+
+LLMs such as Claude and ChatGPT were used to generate plots and assist with Streamlit layout, as we were largely unfamiliar with these tools.
+
+LLMs were used to assist with functional logic such as file I/O, but generally minimally as all of this was rewritten by hand after the fast prototyping stage.
+
+LLMs are not used to process Dashboard page content, make recommendations, or interact with the user in any way.
+
+LLMs were not used when writing most documentation, but did help with refining an abstract from our documentation.
