@@ -1,4 +1,8 @@
-# Precision Digital Agriculture Hackathon 2026 -- Track 4: Analytics & Decision Support
+# Precision Digital Agriculture Hackathon 2026
+
+> Track 4: Analytics & Decision Support
+
+> Project Name: Field Risk Dashboard
 
 ## 1. The Problem
 
