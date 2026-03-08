@@ -16,6 +16,8 @@ from datetime import datetime
 from pathlib import Path
 
 INPUT_CSV = Path(__file__).resolve().parents[2] / "simulations" / "input" / "input.csv"
+NASAPOWER_DIR = Path(__file__).resolve().parents[1] / "data" / "nasapower"
+OPENMETEO_DIR = Path(__file__).resolve().parents[1] / "data" / "openmeteo"
 
 DATA_COLS = ["radn", "maxt", "mint", "rain", "rh", "windspeed"]
 
@@ -82,7 +84,12 @@ def fetch_nasapower(lat: float, lon: float,
     df.interpolate(method="linear", inplace=True)
     df.bfill(inplace=True)
     df.ffill(inplace=True)
-    return _add_time_cols(df)
+    df = _add_time_cols(df)
+
+    # Save to data/nasapower/
+    NASAPOWER_DIR.mkdir(parents=True, exist_ok=True)
+    df.to_csv(NASAPOWER_DIR / f"{lat}_{lon}.csv", index=False)
+    return df
 
 
 # ── 2. Open-Meteo forecast (16-day) ─────────────────────────────────────────
@@ -130,7 +137,12 @@ def fetch_forecast(lat: float, lon: float,
     df.replace([None], np.nan, inplace=True)
     df.ffill(inplace=True)
     df.bfill(inplace=True)
-    return _add_time_cols(df)
+    df = _add_time_cols(df)
+
+    # Save to data/openmeteo/
+    OPENMETEO_DIR.mkdir(parents=True, exist_ok=True)
+    df.to_csv(OPENMETEO_DIR / f"{lat}_{lon}.csv", index=False)
+    return df
 
 
 # ── .met file writer ────────────────────────────────────────────────────────
