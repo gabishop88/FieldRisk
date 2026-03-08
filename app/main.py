@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from weather.predict import generate_met_files
 
 
 BASE = Path("/app")
@@ -57,9 +58,14 @@ def save_input(df):
 def run_simulation():
     with st.status("Running Simulation"):
         st.session_state.simulating = True
-        st.write("Copying input data...")
+        st.write("Copying input data")
         save_input(pd.DataFrame(st.session_state.sites))
-        st.write("Simulating crop growth...")
+        st.write("Requesting weather data")
+        # TODO: Emine's function
+        st.write("Predicting future weather data")
+        generate_met_files(INPUT_PATH)
+
+        st.write("Simulating crop growth")
         time.sleep(5)
         # result = subprocess.run(["Rscript", str(BASE / "simulations/simulation_script.R")], capture_output=True)
         st.write("Validating output...")

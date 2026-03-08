@@ -1,18 +1,18 @@
 import calendar
+from pathlib import Path
 import numpy as np
-from pandas import DataFrame, concat, to_numeric
+from pandas import DataFrame, concat, to_numeric, read_csv
 from datetime import datetime
 
 
 DATA_COLS = ["radn", "maxt", "mint", "rain", "rh", "windspeed"]
 
-
 # region ---------- Helper Functions ----------
 
 
-def import_met(filepath: str) -> DataFrame:
-    assert filepath.endswith(".met"), "Can only load .met files"
-    with open(filepath, "r") as f:
+def import_met(input_file: Path) -> DataFrame:
+    assert input_file.suffix == ".met", "Can only load .met files"
+    with input_file.open("r") as f:
         lines = f.readlines()
         lines = [ln.strip() for ln in lines if ln != ""]
 
@@ -42,8 +42,8 @@ def compute_tav_amp(df: DataFrame) -> tuple[float, float]:
     return round(tav, 4), round(amp, 4)
 
 
-def export_met(df_pred: DataFrame, source_met: str, output_fp: str) -> None:
-    with open(source_met, "r") as f:
+def export_met(df_pred: DataFrame, ref_met: Path, output_file: Path) -> None:
+    with ref_met.open("r") as f:
         source_lines = f.readlines()
 
     important_meta = ("site", "latitude", "longitude")
@@ -60,7 +60,7 @@ def export_met(df_pred: DataFrame, source_met: str, output_fp: str) -> None:
         "() () (MJ/m2/day) (oC) (oC) (mm) (%) (m/s)\n"
     )
 
-    with open(output_fp, "w") as f:
+    with output_file.open("w") as f:
         f.write(meta)
         for _, row in df_pred.iterrows():
             vals = [f"{int(row[c])}" for c in ("year", "day")] + [
@@ -113,7 +113,7 @@ def predict_met_weighted_sum(df_hist, df_fcast, spikiness=1.0) -> DataFrame:
         denom = np.linalg.norm(curr_vec) * np.linalg.norm(window_vec)
         if denom > 0:
             cos_similarity = float(np.dot(curr_vec, window_vec) / denom)
-            similarities[year] = cos_similarity ** spikiness
+            similarities[year] = cos_similarity**spikiness
 
     weights = {year: max(similarities.get(year, 0), 0.0) for year in year_range}
     total = sum(weights.values())
@@ -144,3 +144,26 @@ def predict_met_weighted_sum(df_hist, df_fcast, spikiness=1.0) -> DataFrame:
         result.loc[mask, c] = known_vals.reindex(result.loc[mask, "day"]).values
 
     return result
+
+
+def generate_met_files(input_path: Path) -> None:
+    sites = read_csv(input_path)["Site"].astype(str).tolist()
+
+    hist_dir = Path("/app/data/nasapower")
+    pred_dir = Path("/app/data/openmeteo")
+    out_dir = Path("/app/simulations/output_files/met")
+    for site in sites:
+        if not (hist_dir / f"{site}_nasapower.met").exists():
+            raise FileNotFoundError(f"{site} Missing Weather History.")
+        if not (pred_dir / f"{site}_forecast.met").exists():
+            raise FileNotFoundError(f"{site} Missing Weather Forecast.")
+
+    # load files, run prediction, output mets.
+    for i, site in enumerate(sites):
+        df_hist = import_met(hist_dir / f"{site}_nasapower.met")
+        df_fore = import_met(pred_dir / f"{site}_forecast.met")
+
+        df_pred = predict_met_weighted_sum(df_hist, df_fore, spikiness=10.0)
+        export_met(
+            df_pred, hist_dir / f"{site}_nasapower.met", out_dir / f"loc_{i + 1}.met"
+        )
