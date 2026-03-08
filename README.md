@@ -107,7 +107,9 @@ All data is public. No private keys are required.
 
 ### Preprocessing Pipeline
 
-> TODO: put in image of flowchart
+![Processing Flowchart](images/finalfrdiag.drawio.png)
+
+> Flowchart of business logic and interactibility
 
 ## Run Instructions
 
