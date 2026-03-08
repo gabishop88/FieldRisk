@@ -256,11 +256,14 @@ def build_fig(df, selected_lines, selected_stresses, today):
             annotation_font_size=9,
         )
     for r in range(1, n_rows + 1):
-        fig.add_vline(
-            x=today.timestamp() * 1000,  # plotly needs ms epoch for dates
-            line=dict(color="white", width=1, dash="dash"),
+        fig.add_shape(
+            type="line",
+            x0=today, x1=today,
+            y0=0, y1=1,
+            yref="paper",
+            xref="x",
+            line=dict(color="#FF6B6B", width=1, dash="dash"),
             opacity=0.5,
-            row=r, col=1, # type: ignore
         )
 
     colors = ["#4cc9f0", "#f72585", "#7209b7", "#3a86ff", "#fb8500", "#06d6a0"]
