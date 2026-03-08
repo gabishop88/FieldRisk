@@ -11,13 +11,13 @@ library(here)
 library(readr)
 library(tools)
 library(renv)
-library(parallel)  # For parallel computing
+library(parallel)  
 start_time <- Sys.time() # track running time
 print("Starting ...")
 
-codes_dir <- here() #where the folder with the codes is
+codes_dir <- "app/simulations" #where the folder with the codes is
 output_dir <- paste0(codes_dir,"/output_files") #folder where the output goes
-#setwd(codes_dir) cannot set a working directory 
+setwd(codes_dir)
 wd <-  getwd()
 
 print(paste("codes_dir: ", codes_dir))
