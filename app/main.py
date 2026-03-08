@@ -260,7 +260,7 @@ def build_fig(df, selected_lines, selected_stresses, today):
             x=today.timestamp() * 1000,  # plotly needs ms epoch for dates
             line=dict(color="white", width=1, dash="dash"),
             opacity=0.5,
-            row=r, col=1,
+            row=r, col=1, # type: ignore
         )
 
     colors = ["#4cc9f0", "#f72585", "#7209b7", "#3a86ff", "#fb8500", "#06d6a0"]
@@ -277,7 +277,7 @@ def build_fig(df, selected_lines, selected_stresses, today):
         )
 
     for r, (label, cmap) in enumerate(zip(selected_stresses, STRESS_COLORS), start=2):
-        vals = np.log1p(df[STRESS_VARS[label]].values)
+        vals = 1 - df[STRESS_VARS[label]].values
         fig.add_trace(
             go.Heatmap(
                 x=df["Date"],

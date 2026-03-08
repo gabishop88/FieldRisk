@@ -1,4 +1,4 @@
-**Precision Digital Agriculture Hackathon 2026 -- Track 4: Analytics & Decision Support**
+# Precision Digital Agriculture Hackathon 2026 -- Track 4: Analytics & Decision Support
 
 ## 1. The Problem
 
@@ -14,7 +14,7 @@ Farmers have access to weather forecasts, crop simulation outputs, and satellite
 
 ### What Decisions?
 
-When to irrigate, when to scout for stress, which maturity group to plant, and weather conditions require interventions.
+When to irrigate, when to scout for stress, which maturity group to plant, and when weather conditions require interventions.
 
 ### Why It Matters
 
@@ -31,40 +31,41 @@ Failure to detect stress early can lead to:
 
 - Reduced yields
 - Higher input application costs
-- Inefficient farm management
+- Inefficient resource allocation
 
 ## 2. Solution Overview
 
-### Data Acquisition / Decision / Action Outputs 
-- Weather data (NASA Power, Open Meteo)
-- Apsim Simulations
+### Data Acquisition / Decision / Action Outputs
 
-### Outputs ????
-- Trend Prediction
-- Phenology 
+- Historical Weather Data from the NASA Power API
+- Short-term Weather Forecase from the OpenMeteo API
+- Custom Weighted Sum-based long-term weather prediction
+- Apsim Simulations for simulated crop stress and environemental covariates.
 
-### Decision
+### Outputs
 
-- Risk score
-- Stress alerts 
-- Maturity rankings
-- Forecast warnings
-- Simulation overlay
-- Feedback Loop
+- Clear prediction of crop stress throughout the year.
+- Easy comparison of environmental conditions to crop stress.
+- All data is paired withe the predicted crop phenology so the farmer knows what to look for in the field.
+- During the time before planting, planting date recommendations are provided based on weather data if no estimated planting date is provided.
+
+### Decision Support
+
+- Shows upcoming high-stress periods.
+- Helps farmers understand when their crop is doing well and they can save resources.
+- Provides action recommendations based on the environmental conditions the plant will actually experience, not just weather conditions.
+- Updates simulations throughout the year based on new data to maintain short-term accuracy, and improve long-term predictions.
 
 ### Actions
 
-- Irrigate, Disinfectation, Fertilizer application
-- Scout / Monitor
-- No action
-- Best maturity group selection ???
-
-
-The dashboard is built in **Streamlit** with **Plotly** visualizations. It serves:
-
-- **Simulated:** 
+- When to Irrigate
+- When to Increase Monitoring
+- When to plant, and which maturity is recommended
+- When no action is needed for peace of mind
 
 ## Technical Approach
+
+> The dashboard is built in **Streamlit** with **Plotly** visualizations.
 
 ### Baseline
 
