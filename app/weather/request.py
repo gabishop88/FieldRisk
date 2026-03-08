@@ -15,9 +15,9 @@ import requests
 from datetime import datetime
 from pathlib import Path
 
-INPUT_CSV = Path(__file__).resolve().parents[2] / "simulations" / "input" / "input.csv"
-NASAPOWER_DIR = Path(__file__).resolve().parents[1] / "data" / "nasapower"
-OPENMETEO_DIR = Path(__file__).resolve().parents[1] / "data" / "openmeteo"
+INPUT_CSV = Path("/app/simulations/input/input.csv")
+NASAPOWER_DIR = Path("/app/data/nasapower")
+OPENMETEO_DIR = Path("/app/data/openmeteo")
 
 DATA_COLS = ["radn", "maxt", "mint", "rain", "rh", "windspeed"]
 
@@ -88,7 +88,7 @@ def fetch_nasapower(lat: float, lon: float,
 
     # Save to data/nasapower/
     NASAPOWER_DIR.mkdir(parents=True, exist_ok=True)
-    df.to_csv(NASAPOWER_DIR / f"{lat}_{lon}.csv", index=False)
+    # df.to_csv(NASAPOWER_DIR / f"{lat}_{lon}.csv", index=False)
     return df
 
 
@@ -134,14 +134,14 @@ def fetch_forecast(lat: float, lon: float,
         "windspeed": np.array(data["windspeed_10m_max"], dtype=float) / 3.6,
     })
 
-    df.replace([None], np.nan, inplace=True)
+    df.replace([None], np.nan, inplace=True)  # type: ignore
     df.ffill(inplace=True)
     df.bfill(inplace=True)
     df = _add_time_cols(df)
 
     # Save to data/openmeteo/
     OPENMETEO_DIR.mkdir(parents=True, exist_ok=True)
-    df.to_csv(OPENMETEO_DIR / f"{lat}_{lon}.csv", index=False)
+    # df.to_csv(OPENMETEO_DIR / f"{lat}_{lon}.csv", index=False)
     return df
 
 
@@ -179,25 +179,31 @@ def write_met(df: pd.DataFrame, lat: float, lon: float,
 # ── Convenience: fetch all sources for all sites ────────────────────────────
 
 def fetch_all_for_site(site: str, lat: float, lon: float,
-                       output_dir: str) -> dict[str, pd.DataFrame]:
+                       output_dir: Path) -> dict[str, pd.DataFrame]:
     """
     Fetch NASA POWER + forecast for one site. Save .met files.
 
     Returns dict with keys 'nasapower', 'forecast'.
     """
     results = {}
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # NASA POWER
     df_nasa = fetch_nasapower(lat, lon)
     write_met(df_nasa, lat, lon, site,
-              str(Path(output_dir) / f"{site}_nasapower.met"), "NASA POWER API")
+              str(output_dir / f"nasapower/{site}_nasapower.met"), "NASA POWER API")
     results["nasapower"] = df_nasa
 
     # Forecast
     df_fc = fetch_forecast(lat, lon)
     write_met(df_fc, lat, lon, site,
-              str(Path(output_dir) / f"{site}_forecast.met"), "Open-Meteo Forecast")
+              str(output_dir / f"openmeteo/{site}_forecast.met"), "Open-Meteo Forecast")
     results["forecast"] = df_fc
 
     return results
+
+
+def fetch_weather_data(output_path: Path) -> None:
+    inputs = load_sites()
+    for _, site in inputs.iterrows():
+        fetch_all_for_site(site["Site"], site["Latitude"], site["Longitude"], output_path)

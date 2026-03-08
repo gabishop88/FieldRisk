@@ -3,6 +3,8 @@ name = "FieldRisk"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "folium>=0.20.0",
     "plotly>=6.6.0",
     "streamlit>=1.55.0",
+    "streamlit-folium>=0.26.2",
 ]
