@@ -64,11 +64,10 @@ def run_simulation():
         # TODO: Emine's function
         st.write("Predicting future weather data")
         generate_met_files(INPUT_PATH)
-
         st.write("Simulating crop growth")
-        time.sleep(5)
-        # result = subprocess.run(["Rscript", str(BASE / "simulations/simulation_script.R")], capture_output=True)
-        st.write("Validating output...")
+        result = subprocess.run(["Rscript", str(BASE / "simulations/simulation_script.R")], capture_output=True)
+        st.write(str(result.stdout))
+        st.write(str(result.stderr))
         st.session_state.simulating = False
         st.cache_data.clear()
         st.write("Completed!")
