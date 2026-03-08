@@ -107,6 +107,7 @@ We iterated designs for using NDVI Satellite data to corroborate current stress 
 | G2F 2022 Phenotypic Data | Field metadata (planting date, maturity, coordinates) | IAH1-4 |
 | APSIM/SCE Simulation | Soybean trial outputs (26 maturity groups, daily growth, stress, yield) | IAH5 |
 | NASA POWER / ERA5 | Historical weather for APSIM .met files | IAH1-4 |
+| ISRIC World Soils | Field soil data and water tables | IAH1-4 |
 
 All data is public. No private keys are required.
 
