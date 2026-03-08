@@ -16,13 +16,13 @@ RUN apt-get update -y && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Microsoft package feed for .NET
-# RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
-#     dpkg -i packages-microsoft-prod.deb && \
-#     rm packages-microsoft-prod.deb
+RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    rm packages-microsoft-prod.deb
 
 # Install .NET runtime 
-# RUN apt-get update && apt-get install -y dotnet-runtime-8.0 && \
-#     rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y dotnet-runtime-8.0 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set up global R options for all sessions
 RUN mkdir -p /usr/local/lib/R/etc/ /usr/lib/R/etc/
@@ -44,14 +44,19 @@ COPY app/simulations/next_gen_apsim/data.tar.gz /tmp/
 COPY app/simulations/next_gen_apsim/control.tar.gz /tmp/
 COPY app/simulations/next_gen_apsim/debian-binary /tmp/
 
-# Extract APSIM files to a permanent location and clean up temp files
-RUN tar -xzf /tmp/data.tar.gz -C / && \
-    tar -xzf /tmp/control.tar.gz -C / && \
+RUN mkdir -p /usr/local/apsimx
+RUN tar -xzf /tmp/data.tar.gz -C /usr/local/apsimx --strip-components=2 && \
+    tar -xzf /tmp/control.tar.gz -C /usr/local/apsimx && \
     rm /tmp/data.tar.gz /tmp/control.tar.gz /tmp/debian-binary
 
+# Extract APSIM files to a permanent location and clean up temp files
+# RUN tar -xzf /tmp/data.tar.gz -C / && \
+#     tar -xzf /tmp/control.tar.gz -C / && \
+#     rm /tmp/data.tar.gz /tmp/control.tar.gz /tmp/debian-binary
+
 # Add APSIM-X to environment path
-ENV APSIM_PATH=/usr/local/apsimx
-ENV PATH=$APSIM_PATH:$PATH
+ENV APSIM_PATH=/usr/local/apsimx/local/bin
+ENV PATH="$APSIM_PATH:$PATH"
 
 WORKDIR /app
 

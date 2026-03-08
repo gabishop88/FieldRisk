@@ -15,9 +15,9 @@ library(parallel)
 start_time <- Sys.time() # track running time
 print("Starting ...")
 
-codes_dir <- "app/simulations" #where the folder with the codes is
+codes_dir <- "/app/simulations" #where the folder with the codes is
 output_dir <- paste0(codes_dir,"/output_files") #folder where the output goes
-setwd(codes_dir)
+setwd("simulations")
 wd <-  getwd()
 
 print(paste("codes_dir: ", codes_dir))
@@ -212,8 +212,10 @@ for (trial_n in 1:nrow(trials_df)) {
     #output <- data.frame()  # Initialize an empty data frame for the results
     
     # Wrap APSIM simulation and result handling in tryCatch to handle any errors
+    apsimx_options(exe.path = "/usr/local/apsimx/local/bin/apsim")
     tryCatch({
       output_tmp <- apsimx(filename, src.dir = source_dir, silent = TRUE)
+      print("APSIM RAN!??!?!?!")
       output_tmp <- mutate(output_tmp, "ID" = trial_n) 
       # Append the output of this trial to the overall results
       # output <- rbind(output, output_tmp)
@@ -223,6 +225,7 @@ for (trial_n in 1:nrow(trials_df)) {
       return()  
     }, error = function(e){
       errlog <- paste0(errlog, "Simulation for trial ", trial_n, " failed with error: ", e$message)
+      print(errlog)
       return(errlog)  # Return NULL if there was an error
     })
 }

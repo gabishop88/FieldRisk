@@ -51,7 +51,7 @@ def export_met(df_pred: DataFrame, ref_met: Path, output_file: Path) -> None:
     tav, amp = compute_tav_amp(df_pred)
 
     meta = (
-        f"!data from AgData Ninjas Prediction. retrieved: {datetime.today()}\n"
+        f"!data from AgData Ninjas Prediction. retrieved: {datetime.today().date()}\n"
         "[weather.met.weather]\n"
         f"{'\n'.join(keep_lines)}\n"
         f"tav = {tav}\n"

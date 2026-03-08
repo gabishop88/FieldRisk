@@ -1,0 +1,7 @@
+System.TypeInitializationException: The type initializer for 'Gtk.Application' threw an exception.
+ ---> System.DllNotFoundException: Gtk: libgtk-3-0.dll, libgtk-3.so.0, libgtk-3.0.dylib, gtk-3.dll
+   at GLibrary.Load(Library library)
+   at Gtk.Application..cctor()
+   --- End of inner exception stack trace ---
+   at Gtk.Application.Init()
+   at UserInterface.UserInterface.Main(String[] args) in /tmp/ApsimX/ApsimNG/UserInterface.cs:line 27
