@@ -1,18 +1,3 @@
-# project_path = "/content/drive/My Drive/AgDataNinjas/SCE_Files"
-
-# When analysis starts:
-
-# Get Inputs
-
-# Get Weather Data from API
-
-# Make Predictions
-
-# Create MET Files
-
-# Run Simulations
-
-# Get Outputs
 from pathlib import Path
 import subprocess
 import streamlit as st
@@ -20,28 +5,10 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-# BASE = Path(__file__).parent
 BASE = Path("/app")
+INPUT_PATH = BASE / "simulations/input/input.csv"
+OUTPUT_PATH = BASE / "simulations/output_files/results/daily_sim_outputs.csv"
 
-# region ---------- Helper Functions ----------
-
-
-def run_apsim() -> None:
-    result = subprocess.run(
-        ["Rscript", BASE / "simulations/simulation_script.R"], capture_output=True
-    )
-    print(result.stdout)
-    if result.stderr:
-        print(f"APSIM Error: {result.stderr}")
-
-
-# endregion
-# region ---------- Streamlit Dashboard ---------
-st.set_page_config(page_title="Field Risk Dashboard", layout="wide")
-st.title("Field Risk Dashboard")
-st.caption("CDA 2026 Hackathon — Track 4: Decision Support")
-
-# ── Config ────────────────────────────────────────────────────────────────────
 LINE_VARS = {
     "Max Temp (°C)": "MaxT", "Min Temp (°C)": "MinT",
     "Rainfall (mm)": "Rain", "Solar Radiation": "Radn", "PAW (mm)": "PAWmm",
@@ -51,39 +18,119 @@ STRESS_VARS = {
 }
 STRESS_COLORS = ["Blues", "Reds", "Greens"]
 
-# ── Load data ─────────────────────────────────────────────────────────────────
+EMPTY_SITE = {"Site": "", "Crop": "Maize", "Planting": "", "Genetics": "", "Latitude": 0.0, "Longitude": 0.0}
+
+
+# ── Data helpers ──────────────────────────────────────────────────────────────
 @st.cache_data
-def load_data():
-    in_path = Path("/app/simulations/input/input.csv")
-    inp = pd.read_csv(in_path) if in_path.exists() else None
-    out_path = Path("/app/simulations/output_files/results/daily_sim_outputs.csv")
-    out = pd.read_csv(out_path) if out_path.exists() else None
-    return inp, out
+def load_input():
+    return pd.read_csv(INPUT_PATH) if INPUT_PATH.exists() else pd.DataFrame([EMPTY_SITE])
 
-input_df, output_df = load_data()
+@st.cache_data
+def load_output():
+    return pd.read_csv(OUTPUT_PATH) if OUTPUT_PATH.exists() else None
 
-# ── Sidebar — Field Inputs ────────────────────────────────────────────────────
-st.sidebar.header("Field Configuration")
-st.sidebar.info("ℹ️ Input selection coming soon — showing example data below.")
+def save_input(df):
+    df.to_csv(INPUT_PATH, index=False)
+    st.cache_data.clear()
 
-row = input_df.iloc[0]
-st.sidebar.text_input("Site Name", value=row.get("Site", ""), disabled=True)
-st.sidebar.selectbox("Crop", ["Maize"], disabled=True)
-st.sidebar.text_input("Genetics", value=row.get("Genetics", ""), disabled=True)
-st.sidebar.date_input("Planting Date", disabled=True)
-st.sidebar.number_input("Latitude",  value=float(row.get("Latitude",  0)), disabled=True)
-st.sidebar.number_input("Longitude", value=float(row.get("Longitude", 0)), disabled=True)
+def run_simulation():
+    st.session_state.simulating = True
+    save_input(pd.DataFrame(st.session_state.sites))
+    result = subprocess.run(["Rscript", str(BASE / "simulations/simulation_script.R")], capture_output=True)
+    st.session_state.simulating = False
+    st.cache_data.clear()
+
+
+# ── Session state init ────────────────────────────────────────────────────────
+input_df = load_input()
+if "sites" not in st.session_state:
+    st.session_state.sites = input_df.to_dict("records")
+if "selected_idx" not in st.session_state:
+    st.session_state.selected_idx = 0
+if "simulating" not in st.session_state:
+    st.session_state.simulating = False
+
+
+# ── Page ──────────────────────────────────────────────────────────────────────
+st.set_page_config(page_title="Field Risk Dashboard", layout="wide")
+st.title("Field Risk Dashboard")
+st.caption("CDA 2026 Hackathon — Track 4: Decision Support")
+
+
+# ── Sidebar ───────────────────────────────────────────────────────────────────
+st.sidebar.header("Selected Site")
+
+sites = st.session_state.sites
+site_names = [s["Site"] or f"New Site {i+1}" for i, s in enumerate(sites)]
+
+# Site selector row with +/- buttons
+col_sel, col_add, col_del = st.sidebar.columns([5, 1, 1])
+with col_sel:
+    idx = st.selectbox("Site", range(len(site_names)), format_func=lambda i: site_names[i],
+                       index=st.session_state.selected_idx, label_visibility="collapsed")
+    st.session_state.selected_idx = idx
+with col_add:
+    if st.button("＋"):
+        st.session_state.sites.append(EMPTY_SITE.copy())
+        st.session_state.selected_idx = len(st.session_state.sites) - 1
+        st.rerun()
+with col_del:
+    if st.button("－") and len(sites) > 1:
+        st.session_state.sites.pop(idx)
+        st.session_state.selected_idx = max(0, idx - 1)
+        st.rerun()
+
+st.sidebar.divider()
+
+# Edit current site
+s = st.session_state.sites[idx]
+s["Site"]      = st.sidebar.text_input("Site Name", value=s["Site"])
+s["Crop"]      = st.sidebar.selectbox("Crop", ["Maize"])
+s["Genetics"]  = st.sidebar.text_input("Genetics", value=s["Genetics"])
+s["Planting"]  = st.sidebar.text_input("Planting Date (YYYY-MM-DD)", value=s["Planting"])
+s["Latitude"]  = st.sidebar.number_input("Latitude",  value=float(s["Latitude"]),  format="%.4f")
+s["Longitude"] = st.sidebar.number_input("Longitude", value=float(s["Longitude"]), format="%.4f")
+st.session_state.sites[idx] = s
+
+# Simulate button — grey out if unchanged or currently running
+saved = input_df.to_dict("records")
+all_complete = all(all(str(v) for v in site.values()) for site in sites)
+is_dirty = sites != saved
+
+st.sidebar.divider()
+simulate_disabled = not is_dirty or not all_complete or st.session_state.simulating
+st.sidebar.button(
+    "⏳ Simulating..." if st.session_state.simulating else "▶ Simulate",
+    disabled=simulate_disabled,
+    on_click=run_simulation,
+    type="primary",
+    use_container_width=True,
+)
+if not all_complete:
+    st.sidebar.caption("⚠️ Fill in all fields to enable simulation.")
+elif not is_dirty:
+    st.sidebar.caption("✓ No changes from last simulation.")
+
 
 # ── Main — Chart ──────────────────────────────────────────────────────────────
 st.header("📊 Seasonal Risk Timeline")
 
+output_df = load_output()
 if output_df is None:
-    st.warning("No simulation output found at `simulations/output_files/results/daily_sim_outputs.csv`")
+    st.warning("No simulation output found.")
     st.stop()
 
-df = output_df.copy()
-selected_lines    = st.multiselect("Overlay variables", list(LINE_VARS),   default=["Max Temp (°C)", "Min Temp (°C)"])
-selected_stresses = st.multiselect("Stress indices",    list(STRESS_VARS), default=list(STRESS_VARS))
+# Filter to selected site
+current_site = st.session_state.sites[idx]["Site"]
+df = output_df[output_df["ID"] == current_site].copy() if "ID" in output_df.columns else output_df.copy()
+if df.empty:
+    st.info(f"No output data for site '{current_site}' yet. Run a simulation first.")
+    st.stop()
+
+selected_lines    = st.multiselect("Line Charts",  list(LINE_VARS),   default=["Max Temp (°C)"])
+selected_stresses = st.multiselect("Stress Types", list(STRESS_VARS), default=["Temp Stress"])
+
 
 def build_fig(df, selected_lines, selected_stresses):
     n_stress = len(selected_stresses)
@@ -99,7 +146,7 @@ def build_fig(df, selected_lines, selected_stresses):
                       line_width=0, annotation_text=stage,
                       annotation_position="top left", annotation_font_size=9)
 
-    colors = ["#4cc9f0","#f72585","#7209b7","#3a86ff","#fb8500","#06d6a0"]
+    colors = ["#4cc9f0", "#f72585", "#7209b7", "#3a86ff", "#fb8500", "#06d6a0"]
     for i, label in enumerate(selected_lines):
         fig.add_trace(go.Scatter(x=df["DOY"], y=df[LINE_VARS[label]], name=label,
                                  line=dict(color=colors[i % len(colors)], width=1.5)), row=1, col=1)
@@ -113,5 +160,6 @@ def build_fig(df, selected_lines, selected_stresses):
     fig.update_layout(height=420 + 80 * n_stress, margin=dict(t=20, b=40),
                       legend=dict(orientation="h", y=1.05))
     return fig
+
 
 st.plotly_chart(build_fig(df, selected_lines, selected_stresses), use_container_width=True)
