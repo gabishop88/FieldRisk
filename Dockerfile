@@ -19,7 +19,7 @@ RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod
     dpkg -i packages-microsoft-prod.deb && \
     rm packages-microsoft-prod.deb
 
-# Install .NET runtime (8.0 example — adjust if needed)
+# Install .NET runtime 
 RUN apt-get update && apt-get install -y dotnet-runtime-8.0 && \
     rm -rf /var/lib/apt/lists/*
 
@@ -31,9 +31,12 @@ RUN echo "options(renv.config.pak.enabled = FALSE, repos = c(CRAN = 'https://cra
 RUN R -e 'install.packages("remotes")'
 RUN R -e 'remotes::install_version("renv", version = "1.0.3")'
 
+# Copy the renv cache into the image
+COPY renv_cache /root/.cache/R/renv
+
 # Copy and restore the R project package environment
 COPY renv.lock renv.lock
-RUN --mount=type=cache,id=renv-cache,target=/root/.cache/R/renv R -e 'renv::restore()'
+RUN R -e 'renv::restore()'
 
 # Copy APSIM-X files to the Docker image (version 2025.4.7717.0)
 COPY next_gen_apsim/data.tar.gz /tmp/
