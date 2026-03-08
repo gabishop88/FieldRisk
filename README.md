@@ -74,6 +74,8 @@ Failure to detect stress early can lead to:
 
 ### Baselines & Our Approach
 
+Our first approaches used Google Colab notebooks for easy sharing and fast iteration. Once we had our approach finalized, we moved to a Docker container with streamlit to put tother all of the diseparate parts into a cohesive dashboard. This allowed us many different parts together quickly, but cost extra time in translating components from `.ipynb` notebooks to a more professional Python/Docker package structure with R/APSIM integrations.
+
 #### APSIM
 
 Our project is built on APSIM for prediction and environmental covariate estimation. Our environmental covariates are a relatively new approach compared to most APSIM projects. We can improve this by better integrating APSIM (an R package) with our Python-based project.
