@@ -6,6 +6,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+
+
 BASE = Path("/app")
 INPUT_PATH = BASE / "simulations/input/input.csv"
 OUTPUT_PATH = BASE / "simulations/output_files/results/daily_sim_outputs.csv"
@@ -56,7 +58,7 @@ def run_simulation():
     with st.status("Running Simulation"):
         st.session_state.simulating = True
         st.write("Copying input data...")
-        # save_input(pd.DataFrame(st.session_state.sites))
+        save_input(pd.DataFrame(st.session_state.sites))
         st.write("Simulating crop growth...")
         time.sleep(5)
         # result = subprocess.run(["Rscript", str(BASE / "simulations/simulation_script.R")], capture_output=True)
@@ -129,7 +131,10 @@ st.session_state.sites[idx] = s
 # Simulate button — grey out if unchanged or currently running
 saved = input_df.to_dict("records")
 all_complete = all(all(str(v) for v in site.values()) for site in sites)
-is_dirty = sites != saved
+def normalize_sites(sites):
+    return [{k: str(v).strip() for k, v in s.items()} for s in sites]
+
+is_dirty = normalize_sites(st.session_state.sites) != normalize_sites(input_df.to_dict("records"))
 
 
 st.sidebar.divider()
@@ -142,9 +147,9 @@ st.sidebar.button(
     use_container_width=True,
 )
 if not all_complete:
-    st.toast("Fill in all fields to enable simulation.")
+    st.sidebar.caption("Fill in all fields to enable simulation.")
 elif not is_dirty:
-    st.toast("No changes from last simulation.")
+    st.sidebar.caption("No changes from last simulation.")
 
 
 # ── Main — Chart ──────────────────────────────────────────────────────────────
