@@ -117,7 +117,12 @@ def predict_met_weighted_sum(df_hist, df_fcast, spikiness=1.0) -> DataFrame:
 
     weights = {year: max(similarities.get(year, 0), 0.0) for year in year_range}
     total = sum(weights.values())
-    weights = {year: w / total for year, w in weights.items()}
+    if total > 0:
+        weights = {year: w / total for year, w in weights.items()}
+    else:
+        # Fallback: equal weights when all similarities are zero/negative
+        n = len(weights)
+        weights = {year: 1.0 / n for year in weights}
 
     # Compute weighted sum of previous years
     days_this_year = 365 + int(calendar.isleap(curr_year))
