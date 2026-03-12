@@ -1,6 +1,6 @@
 # Field Risk Dashboard
 
-> Precision Digital Agriculture Hackathon 2026
+> Precision & Digital Agriculture Hackathon 2026
 
 > Track 4: Analytics & Decision Support
 
